@@ -6,7 +6,7 @@ const handleQuery = (sqlQuery, fn) => {
         const connection = mysql.createConnection(utils.connectionDB);
         connection.connect();
         connection.query(sqlQuery, (err, rows) => {
-            fn(err, JSON.parse(JSON.stringify(rows))); // use callback to get results
+            fn(err, rows ? JSON.parse(JSON.stringify(rows)) : []); // use callback to get results
         })
         connection.end();
     }catch(e){

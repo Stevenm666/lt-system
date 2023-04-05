@@ -58,7 +58,7 @@ const Login = () => {
 				<Grid container spacing={2}>
 					<Grid item xs={12}>
 						<Box>
-							<Typography style={styles.title}>Remission project</Typography>
+							<Typography style={styles.title}>LT-SYSTEM</Typography>
 						</Box>
 					</Grid>
 					{/* user input */}
@@ -81,6 +81,7 @@ const Login = () => {
 									type="text"
 									onChange={(e) => field.onChange(e.target.value)}
 									defaultValue=""
+									size="small"
 								/>
 							)}
 						/>
@@ -107,6 +108,7 @@ const Login = () => {
 									onChange={(e) => field.onChange(e.target.value)}
 									type="password"
 									defaultValue=""
+									size="small"
 								/>
 							)}
 						/>
