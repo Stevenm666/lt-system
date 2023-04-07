@@ -21,14 +21,17 @@ uploadRouter.post('/users', upload.single('file') ,async(req, res) => {
             const queryIdentifier = `SELECT * FROM user WHERE identy=${item[2]}`;
 
             db.handleQuery(queryIdentifier, (err, result) => {
-              if (err) res.send(err);
+              if (err){
+                res.send(err);
+                return;
+              };
               if (!result.length){
                 const queryCreate = `
                   INSERT INTO user (name, type_identy, identy, addres, city, phone, created_at) 
                   VALUES ("${item[0]}", "${item[1]}", ${item[2]}, "${item[6]}", "${item[7]}", "${item[8]}", "${new Date().toISOString().slice(0, 19).replace('T', ' ')}")
                 `
                 db.handleQuery(queryCreate, (err, result) => {
-                  if (err) utils.errorReponse(res, 500, "Error al guardar");
+                  if (err) console.log(err)
                 })
               }
             })

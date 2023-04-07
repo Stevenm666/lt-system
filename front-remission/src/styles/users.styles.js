@@ -16,5 +16,21 @@ export const styles = {
     },
     textUpload: {
         fontSize: "10px",
+    },
+    containerOverflow: {
+        height: "300px",
+        overflowY: "scroll",
+        padding: "10px",
+    },
+    textHeader: {
+        fontSize: "12px",
+        color: "#3C3C3B",
+        lineHeight: "14px",
+        marginLeft: "20px",
+    },
+    containerPagination: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
     }
 }

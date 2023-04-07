@@ -7,7 +7,6 @@ import { Grid, Box, Typography } from '@material-ui/core';
 import { styles } from '../../styles/listUsers.styles';
 
 const ListByUsers = ({ user }) => {
-  console.log({user})
   return (
     <Box style={styles?.container}>
       <Grid container>

@@ -14,21 +14,43 @@ import ListByUsers from './ListByUsers';
 import { postUploadUsers } from '../../services/uploadFiles';
 import { getUsers } from '../../services/users';
 
+// import pages
+import ItemsPerPage from '../../share/Pagination/ItemsPerPage';
+import TotalPages from '../../share/Pagination/TotalPages';
+
+// useDebounce
+import { useDebounceHook } from '../../hooks/useDebounce';
+
+
 const Users = () => {
 
   const [listUsers, setListUsers] = useState([])
   const [loading, setLoading ] = useState(false)
   const [reload, setReload] = useState(false)
 
+  // pages
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [pages, setPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
+
+  // filter using using debounce
+  const [filter, setFilter] = useState("");
+
+  const useDebounceFilter = useDebounceHook(filter);
 
   // check if exists list users
   useEffect(() => {
     try{
       setLoading(true);
-      getUsers()
+      getUsers(itemsPerPage, pages, useDebounceFilter)
         .then(({data}) => {
           if (data?.status === "success"){
-            setListUsers(data?.data);
+            setListUsers(data?.data?.data);
+            setTotalPages(data?.data?.total_pages)
+            if (pages > data?.data?.total_pages) {
+              setPages(1)
+            }
           }
         })
         .catch(e => console.log(e))
@@ -37,7 +59,7 @@ const Users = () => {
     }finally{
       setLoading(false);
     }
-  }, [reload])
+  }, [reload, itemsPerPage, pages, useDebounceFilter])
 
   const handleUploadUsers = (e) => {
     try{
@@ -47,7 +69,9 @@ const Users = () => {
 
       postUploadUsers(formData)
         .then(() => {
-            setReload(prev => !prev);
+          setTimeout(() => {
+            setReload(prev => !prev)
+          }, 500)
         })
         .catch(e => console.log(e))
       // service upload users
@@ -90,6 +114,7 @@ const Users = () => {
                         variant="outlined"
                         label="Buscar usuarios"
                         size="small"
+                        onChange={(e) => setFilter((e.target.value).toLowerCase())}
                     />
                 </Box>
             </Grid>
@@ -98,36 +123,47 @@ const Users = () => {
         <Grid container>
           <Grid item xs={3}>
             <Box>
-              <Typography>Nombre</Typography>
+              <Typography style={styles?.textHeader}>Nombre</Typography>
             </Box>
           </Grid>
           <Grid item xs={3}>
             <Box>
-              <Typography>Documento</Typography>
+              <Typography style={styles?.textHeader}>Documento</Typography>
             </Box>
           </Grid>
           <Grid item xs={2}>
             <Box>
-              <Typography>Celular</Typography>
+              <Typography style={styles?.textHeader}>Celular</Typography>
             </Box>
           </Grid>
           <Grid item xs={3}>
             <Box>
-              <Typography>Dirección</Typography>
+              <Typography style={styles?.textHeader}>Dirección</Typography>
             </Box>
           </Grid>
         </Grid>
-        <Box mt={3}>
+        <Box mt={3} style={styles?.containerOverflow}>
           {loading 
             ? "loading" 
             : !listUsers?.length 
             ? <Box display="flex" justifyContent="center" mt={8}>No hay usuarios</Box> 
             : listUsers?.map((user) => (
-                 <ListByUsers user={user}/>
+                 <ListByUsers user={user} key={user?.id}/>
              )) 
           }
         </Box>
-        </Box> 
+        <Box mt={5} style={styles?.containerPagination}>
+          <ItemsPerPage
+            itemsPerPage={itemsPerPage}
+            setItemsPerPage={setItemsPerPage}
+          />
+          <TotalPages 
+            totalPages={totalPages}
+            setPages={setPages}
+            pages={pages}
+          />
+        </Box>
+      </Box> 
     </Box>
   )
 }
