@@ -4,15 +4,15 @@ import React, { useState, useEffect } from "react";
 import { Box, Grid, Typography, Button, TextField } from "@material-ui/core";
 
 // styles
-import { styles } from "../../styles/users.styles";
+import { styles } from "../../styles/products.styles";
 
 // list component
-import ListByUsers from "./ListByUsers";
+import ListProducts from "./ListProducts";
 
 // services
 
-import { postUploadUsers } from "../../services/uploadFiles";
-import { getUsers } from "../../services/users";
+import { postUploadProducts } from "../../services/uploadFiles";
+import { getProducts } from "../../services/products";
 
 // import pages
 import ItemsPerPage from "../../share/Pagination/ItemsPerPage";
@@ -20,9 +20,10 @@ import TotalPages from "../../share/Pagination/TotalPages";
 
 // useDebounce
 import { useDebounceHook } from "../../hooks/useDebounce";
+import FormProduct from "./FormProduct";
 
-const Users = () => {
-  const [listUsers, setListUsers] = useState([]);
+const Products = () => {
+  const [listProducts, setListProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [reload, setReload] = useState(false);
 
@@ -40,10 +41,10 @@ const Users = () => {
   useEffect(() => {
     try {
       setLoading(true);
-      getUsers(itemsPerPage, pages, useDebounceFilter)
+      getProducts(itemsPerPage, pages, useDebounceFilter)
         .then(({ data }) => {
           if (data?.status === "success") {
-            setListUsers(data?.data?.data);
+            setListProducts(data?.data?.data);
             setTotalPages(data?.data?.total_pages);
             if (pages > data?.data?.total_pages) {
               setPages(1);
@@ -58,20 +59,19 @@ const Users = () => {
     }
   }, [reload, itemsPerPage, pages, useDebounceFilter]);
 
-  const handleUploadUsers = (e) => {
+  const handleUploadProducts = (e) => {
     try {
       const formData = new FormData();
       const file = e.target.files[0];
       formData.append("file", file);
 
-      postUploadUsers(formData)
+      postUploadProducts(formData)
         .then(() => {
           setTimeout(() => {
             setReload((prev) => !prev);
           }, 500);
         })
         .catch((e) => console.log(e));
-      // service upload users
     } catch (e) {
       console.log(e);
     }
@@ -82,7 +82,7 @@ const Users = () => {
       <Grid container>
         <Grid item xs={12}>
           <Box>
-            <Typography style={styles?.title}> Usuarios</Typography>
+            <Typography style={styles?.title}>Productos</Typography>
           </Box>
         </Grid>
         <Grid item xs={6} />
@@ -93,7 +93,7 @@ const Users = () => {
               style={{ display: "none" }}
               id="files"
               type="file"
-              onChange={(e) => handleUploadUsers(e)}
+              onChange={(e) => handleUploadProducts(e)}
               onClick={(e) => {
                 e.target.value = ""; // allow check upload same file
               }}
@@ -106,7 +106,7 @@ const Users = () => {
               >
                 <Typography style={styles?.textUpload}>
                   {" "}
-                  Cargar usuarios
+                  Cargar productos
                 </Typography>
               </Button>
             </label>
@@ -116,48 +116,53 @@ const Users = () => {
           <Box>
             <TextField
               variant="outlined"
-              label="Buscar usuarios"
+              label="Buscar producto"
               size="small"
               onChange={(e) => setFilter(e.target.value.toLowerCase())}
             />
           </Box>
         </Grid>
+        <Grid item xs={12}>
+          <Box mt={1} mb={1}>
+            <FormProduct setReload={setReload}/>
+          </Box>
+        </Grid>
       </Grid>
       <Box mt={3}>
         <Grid container>
-          <Grid item xs={3}>
+          <Grid item xs={4}>
             <Box>
               <Typography style={styles?.textHeader}>Nombre</Typography>
             </Box>
           </Grid>
           <Grid item xs={3}>
             <Box>
-              <Typography style={styles?.textHeader}>Documento</Typography>
+              <Typography style={styles?.textHeader}>Código</Typography>
             </Box>
           </Grid>
           <Grid item xs={2}>
             <Box>
-              <Typography style={styles?.textHeader}>Celular</Typography>
+              <Typography style={styles?.textHeader}>Precio</Typography>
             </Box>
           </Grid>
           <Grid item xs={3}>
             <Box>
-              <Typography style={styles?.textHeader}>Dirección</Typography>
+              <Typography style={styles?.textHeader}>Estado</Typography>
             </Box>
           </Grid>
         </Grid>
-        <Box mt={3} style={styles?.containerOverflow}>
+        <Box mt={2} style={styles?.containerOverflow}>
           {loading ? (
             "loading"
-          ) : !listUsers?.length ? (
+          ) : !listProducts?.length ? (
             <Box display="flex" justifyContent="center" mt={8}>
-              No hay usuarios
+              No hay productos
             </Box>
           ) : (
-            listUsers?.map((user) => <ListByUsers user={user} key={user?.id} />)
+            listProducts?.map((product) => <ListProducts product={product} key={product?.id} setReload={setReload} />)
           )}
         </Box>
-        <Box mt={5} style={styles?.containerPagination}>
+        <Box mt={3} style={styles?.containerPagination}>
           <ItemsPerPage
             itemsPerPage={itemsPerPage}
             setItemsPerPage={setItemsPerPage}
@@ -173,4 +178,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Products;

@@ -1,6 +1,6 @@
 export const styles = {
     container: {
-        padding: "30px"
+        padding: "30px",
     },
     title: {
         fontSize: "20px",
@@ -25,11 +25,13 @@ export const styles = {
         fontSize: "12px",
         color: "#3C3C3B",
         lineHeight: "14px",
-        marginLeft: "20px",
+        textAlign: "center",
+        marginRight: "15px"
     },
     containerPagination: {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center"
     }
+
 }

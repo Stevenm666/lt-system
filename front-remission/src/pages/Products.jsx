@@ -1,9 +1,13 @@
 import React from 'react'
 
-const Products = () => {
+import ModuleProducts from '../common/ModuleProducts/Products'
+
+const ProductsPage = () => {
   return (
-    <div>Products</div>
+    <>
+      <ModuleProducts />
+    </>
   )
 }
 
-export default Products
+export default ProductsPage;

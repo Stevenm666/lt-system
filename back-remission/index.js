@@ -9,6 +9,7 @@ const PORT = 3001;
 const loginRouter = require('./src/router/login');
 const uploadRouter = require('./src/router/upload');
 const usersRouter = require('./src/router/users');
+const productsRouter = require('./src/router/products');
 
 // import middleware
 const middlewareHeaders = require('./src/middlewares/headers');
@@ -28,7 +29,7 @@ app.use((req, res, next) => middlewareHeaders(req, res, next)) // validate heade
 app.use('/login', loginRouter);
 app.use('/upload', uploadRouter);
 app.use('/users', usersRouter);
-
+app.use('/products', productsRouter)
 
 // listen
 app.listen(PORT)
