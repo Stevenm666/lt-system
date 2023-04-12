@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // MUI
-import { Grid, Box, Typography } from "@material-ui/core";
+import { Grid, Box, Typography, Button } from "@material-ui/core";
 
 // styles
 import { styles } from "../../styles/listProducts.styles";
@@ -10,30 +10,61 @@ import { styles } from "../../styles/listProducts.styles";
 import { FiEdit2, FiDelete } from "react-icons/fi";
 
 // services
-import { putProducts, deleteProducts } from "../../services/products";
+import { deleteProducts, activeProduct } from "../../services/products";
 
 // modal
 
 import SharedDialog from "../../share/Dialog/SharedDialog";
 import PutFormProducts from "./PutFormProduct";
 
-const ListProducts = ({ product, setReload }) => {
+// useSnackbar
+import { useSnackbar } from "notistack";
+import { successToast } from "../../utils/misc";
+
+// redux
+import { useSelector } from "react-redux";
+
+const ListProducts = ({ product, setReload, status }) => {
   // states
   const [open, setOpen] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+
+  // redux
+  const user = useSelector(state => state.user);
 
   // delete product
   const handleDelProduct = () => {
     try {
-      deleteProducts(product?.id).then(({ data }) => {
+      deleteProducts(product?.id, user?.rol).then(({ data }) => {
         if (data?.status === "success") {
           // show alter sweet
           setReload((prev) => !prev);
+          enqueueSnackbar("Se ha borrado correctamente", successToast);
         }
       });
     } catch (e) {
       console.log(e);
     }
   };
+
+  const handleActive = () => {
+    try{
+      const submitData = {
+        status: 1,
+        rol: user?.rol
+      }
+      activeProduct(product?.id, submitData)
+        .then(({data}) => {
+          if (data?.status === "success"){
+            enqueueSnackbar("Se ha recuperado exitosamente", successToast);
+            setReload(prev => !prev);
+          }
+        })
+        .catch(e => console.log(e))
+    }catch(e){
+      console.log(e);
+    }
+  }
 
   // put product
   return (
@@ -43,7 +74,13 @@ const ListProducts = ({ product, setReload }) => {
         open={open}
         handleClose={() => setOpen(false)}
         title="Actualizar producto"
-        body={<PutFormProducts product={product} setReload={setReload} handleClose={() => setOpen(false)}/>}
+        body={
+          <PutFormProducts
+            product={product}
+            setReload={setReload}
+            handleClose={() => setOpen(false)}
+          />
+        }
       />
 
       <Box style={styles?.container}>
@@ -68,17 +105,36 @@ const ListProducts = ({ product, setReload }) => {
           <Grid item xs={3}>
             <Box style={styles?.containerStatus}>
               <Box style={{ marginLeft: "42px" }}>
-                <Typography style={styles?.textItem}>Activo</Typography>
+                <Typography style={styles?.textItem}>
+                  {status ? "Activo" : "Inactivo"}
+                </Typography>
               </Box>
-              <Box style={styles?.pointerCursor} onClick={() => setOpen(true)}>
-                <FiEdit2 />
-              </Box>
-              <Box
-                style={styles?.pointerCursor}
-                onClick={() => handleDelProduct()}
-              >
-                <FiDelete />
-              </Box>
+              {status ? (
+                <>
+                  <Box
+                    style={styles?.pointerCursor}
+                    onClick={() => setOpen(true)}
+                  >
+                    <FiEdit2 />
+                  </Box>
+                  <Box
+                    style={styles?.pointerCursor}
+                    onClick={() => handleDelProduct()}
+                  >
+                    <FiDelete />
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <Box>
+                    <Button variant="outlined" style={styles?.backButton} onClick={() => handleActive()}>
+                      <Typography style={styles?.backText}>
+                        Recuperar
+                      </Typography>
+                    </Button>
+                  </Box>
+                </>
+              )}
             </Box>
           </Grid>
         </Grid>

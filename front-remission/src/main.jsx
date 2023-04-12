@@ -9,12 +9,17 @@ import store from "./app/store";
 import { Provider } from "react-redux";
 
 // fonts
-import "./fonts.css"
+import "./fonts.css";
+
+// snack provider
+import { SnackbarProvider } from "notistack";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <SnackbarProvider>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </SnackbarProvider>
   </BrowserRouter>
 );

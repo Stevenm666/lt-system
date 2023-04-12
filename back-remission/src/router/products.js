@@ -8,8 +8,8 @@ const productsRouter = express.Router();
 
 productsRouter.get("/", (req, res) => {
   try {
-    const { page = 1, item = 5, filter = "" } = req.query;
-    const countQuery = `SELECT COUNT(*) as count FROM product WHERE (name LIKE "%${filter}%" OR code LIKE "${filter}%") AND status=1`;
+    const { page = 1, item = 5, filter = "", status = 1 } = req.query;
+    const countQuery = `SELECT COUNT(*) as count FROM product WHERE (name LIKE "%${filter}%" OR code LIKE "${filter}%") AND status=${status}`;
 
     db.handleQuery(countQuery, (err, count) => {
       if (err) {
@@ -24,7 +24,7 @@ productsRouter.get("/", (req, res) => {
 
       const offset = (page - 1) * item; // offset
 
-      const queryLimitOffset = `SELECT * FROM product WHERE (name LIKE "%${filter}%" OR code LIKE "${filter}%") AND status=1 ORDER BY id DESC LIMIT ${item} offset ${offset}`;
+      const queryLimitOffset = `SELECT * FROM product WHERE (name LIKE "%${filter}%" OR code LIKE "${filter}%") AND status=${status} ORDER BY id DESC LIMIT ${item} offset ${offset}`;
 
       db.handleQuery(queryLimitOffset, (err, data) => {
         if (err) {
@@ -37,6 +37,7 @@ productsRouter.get("/", (req, res) => {
           items_per_page: item,
           current_page: page,
           total_pages: totalPages,
+          status: parseInt(status),
         };
 
         res.json({
@@ -53,7 +54,7 @@ productsRouter.get("/", (req, res) => {
 
 productsRouter.post("/", (req, res) => {
   try {
-    const { name, code, price } = req.body;
+    const { name, code, price, rol } = req.body;
 
     const queryVerify = `SELECT COUNT(*) as count FROM product WHERE code="${code}" and status=1`;
 
@@ -69,14 +70,14 @@ productsRouter.post("/", (req, res) => {
         });
       } else {
         const queryCreate = `
-          INSERT INTO product (name, code, price, created_at, updated_at, status) 
+          INSERT INTO product (name, code, price, created_at, updated_at, status, updated_by) 
           VALUES ("${name}", "${code}", ${price}, "${new Date()
           .toISOString()
           .slice(0, 19)
           .replace("T", " ")}", "${new Date()
           .toISOString()
           .slice(0, 19)
-          .replace("T", " ")}", 1)
+          .replace("T", " ")}", 1, "${rol}")
         `;
         db.handleQuery(queryCreate, (err, data) => {
           if (err) {
@@ -96,12 +97,12 @@ productsRouter.post("/", (req, res) => {
 productsRouter.put("/:id", (req, res) => {
   try {
     const { id } = req.params;
-    const { name, code, price, changeCode } = req.body;
+    const { name, code, price, changeCode, rol } = req.body;
 
     const queryUpdate = `UPDATE product SET name="${name}", code="${code}", price=${price}, updated_at="${new Date()
       .toISOString()
       .slice(0, 19)
-      .replace("T", " ")}" WHERE id=${id}`;
+      .replace("T", " ")}", updated_by="${rol}" WHERE id=${id}`;
 
     // change code is true will verify another code
 
@@ -143,13 +144,35 @@ productsRouter.put("/:id", (req, res) => {
   }
 });
 
-productsRouter.delete("/:id", (req, res) => {
+productsRouter.put("/:id/active", (req, res) => {
   try {
     const { id } = req.params;
+    const { status, rol } = req.body;
+
+    const queryUpdate = `UPDATE product SET status=${status}, updated_at="${new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ")}", updated_by="${rol}" WHERE id=${id}`;
+
+    db.handleQuery(queryUpdate, (err, data) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      utils.sucessResponse(res, [], "success");
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+productsRouter.delete("/:id/:rol", (req, res) => {
+  try {
+    const { id, rol } = req.params;
     const queryDisable = `UPDATE product SET status=0, updated_at="${new Date()
       .toISOString()
       .slice(0, 19)
-      .replace("T", " ")}" WHERE id=${id}`;
+      .replace("T", " ")}", updated_by="${rol}" WHERE id=${id}`;
 
     db.handleQuery(queryDisable, (err, _) => {
       if (err) {

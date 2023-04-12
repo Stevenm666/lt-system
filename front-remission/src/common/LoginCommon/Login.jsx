@@ -26,6 +26,10 @@ import { loggedIn } from "../../features/user/userSlice";
 // image
 import image from "../../assets/LoginIlustrator.svg";
 
+// useSnackbar
+import { useSnackbar } from "notistack";
+import { errorToast, successToast } from "../../utils/misc.js";
+
 const Login = () => {
   const {
     handleSubmit,
@@ -34,12 +38,17 @@ const Login = () => {
   } = useForm();
 
   const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar()
 
   const onSubmit = async (values) => {
     try {
       const { data } = await loginService(values);
 
       if (data?.status === "success") {
+        if (data?.message !== "success") {
+          enqueueSnackbar(data?.message, errorToast)
+          return;
+        }
         dispatch(
           loggedIn({
             username: data?.data?.username,
@@ -57,6 +66,8 @@ const Login = () => {
             isLoggedIn: true,
           })
         );
+      }else{
+        enqueueSnackbar(data?.message, errorToast)
       }
     } catch (e) {
       console.error(e);

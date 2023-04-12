@@ -18,6 +18,13 @@ import {
 import { AiOutlinePlus } from "react-icons/ai";
 import { postProducts } from "../../services/products";
 
+// useSnackbar
+import { useSnackbar } from "notistack";
+import { errorToast, successToast } from "../../utils/misc";
+
+// redux
+import { useSelector } from "react-redux";
+
 const FormProduct = ({ setReload }) => {
   const {
     control,
@@ -25,6 +32,12 @@ const FormProduct = ({ setReload }) => {
     formState: { errors },
     reset
   } = useForm();
+
+  // redux
+  const user = useSelector(state => state?.user);
+
+  // useSnackbar
+  const { enqueueSnackbar } = useSnackbar();
 
   const [expanded, setExpanded] = useState(false);
 
@@ -36,15 +49,17 @@ const FormProduct = ({ setReload }) => {
 
   const onSubmit = values => {
     try{
+      values.rol = user?.rol;
       postProducts(values)
         .then(({data}) => {
           if (data?.status === 'success'){
             setExpanded(false)
             reset();
             setReload(prev => !prev)
+            enqueueSnackbar("Se creó correctamente", successToast)
           }else{
             // show the message with alert sweet
-            console.log(data?.message)
+            enqueueSnackbar(data?.message, errorToast)
           }
         })
         .catch(e => console.log({e}))

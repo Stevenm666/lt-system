@@ -8,7 +8,7 @@ export const styles = {
     textItem: {
         fontSize: '12px',
         lineHeight: '14px',
-        textAlign: "center"
+        textAlign: "center",
     },
     textItemName: {
         fontSize: '12px',
@@ -27,5 +27,12 @@ export const styles = {
     },
     pointerCursor: {
         cursor: "pointer"
+    },
+    backButton: {
+        height: "30px",
+    },
+    backText: {
+        fontSize: "12px",
+        lineHeight: "14px"
     }
 }

@@ -13,8 +13,9 @@ const readXlsxFile = require("read-excel-file/node");
 
 const upload = multer({ dest: "uploads/" });
 
-uploadRouter.post("/users", upload.single("file"), async (req, res) => {
+uploadRouter.post("/users/:rol", upload.single("file"), async (req, res) => {
   try {
+    const { rol } = req.params;
     readXlsxFile(req.file.path)
       .then((rows) => {
         rows.forEach((item) => {
@@ -27,13 +28,13 @@ uploadRouter.post("/users", upload.single("file"), async (req, res) => {
             }
             if (!result.length) {
               const queryCreate = `
-                  INSERT INTO user (name, type_identy, identy, addres, city, phone, created_at) 
+                  INSERT INTO user (name, type_identy, identy, addres, city, phone, created_at, created_by) 
                   VALUES ("${item[0]}", "${item[1]}", ${item[2]}, "${
                 item[6]
               }", "${item[7]}", "${item[8]}", "${new Date()
                 .toISOString()
                 .slice(0, 19)
-                .replace("T", " ")}")
+                .replace("T", " ")}", "${rol}")
                 `;
               db.handleQuery(queryCreate, (err, result) => {
                 if (err) console.log(err);
@@ -54,8 +55,9 @@ uploadRouter.post("/users", upload.single("file"), async (req, res) => {
   }
 });
 
-uploadRouter.post("/products", upload.single("file"), async (req, res) => {
+uploadRouter.post("/products/:rol", upload.single("file"), async (req, res) => {
   try {
+    const { rol } = req.params;
     readXlsxFile(req.file.path)
       .then((rows) => {
         rows.forEach((item) => {
@@ -68,14 +70,14 @@ uploadRouter.post("/products", upload.single("file"), async (req, res) => {
             }
             if (!result.length) {
               const queryCreate = `
-                  INSERT INTO product (name, code, price, created_at, updated_at, status) 
+                  INSERT INTO product (name, code, price, created_at, updated_at, status, updated_by) 
                   VALUES ("${item[2]}", "${item[1]}", ${item[11]}, "${new Date()
                 .toISOString()
                 .slice(0, 19)
                 .replace("T", " ")}", "${new Date()
                 .toISOString()
                 .slice(0, 19)
-                .replace("T", " ")}", 1)
+                .replace("T", " ")}", 1, "${rol}")
                 `;
               db.handleQuery(queryCreate, (err, result) => {
                 if (err) console.log(err);

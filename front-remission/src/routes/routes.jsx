@@ -13,6 +13,7 @@ const NotFound = lazy(() => import("../pages/NotFound"));
 // roles acccess by environments
 const ADMIN = import.meta.env.VITE_ROLE_ADMIN;
 const USER = import.meta.env.VITE_ROLE_USER;
+const ROOT = import.meta.env.VITE_ROLE_ROOT;
 
 // icons
 import { FaHome, FaUserAlt, FaProductHunt, FaMoneyCheckAlt } from "react-icons/fa"
@@ -26,12 +27,12 @@ const routers = [
     //genRoutersProp: true,
     // it will pass the authRouters prop to Layout, you can use it to generate menus
     genAuthRoutersProp: true,
-    auth: [ADMIN, USER],
+    auth: [ADMIN, USER, ROOT],
     barside: false,
     children: [
       {
         element: <Box />,
-        auth: [ADMIN],
+        auth: [ADMIN, ROOT],
         index: true,
         path: "/",
         name: "home",
@@ -41,7 +42,7 @@ const routers = [
       {
         path: "/users",
         element: <Users />,
-        auth: [ADMIN, USER],
+        auth: [ADMIN, USER, ROOT],
         name: "usuarios",
         barside: true,
         icon: <FaUserAlt />
@@ -49,7 +50,7 @@ const routers = [
       {
         path: "/products",
         element: <Products />,
-        auth: [ADMIN],
+        auth: [ADMIN, ROOT],
         name: "productos",
         barside: true,
         icon: <FaProductHunt />
@@ -57,7 +58,7 @@ const routers = [
       {
         path: "/remissions",
         element: <Remissions />,
-        auth: [ADMIN],
+        auth: [ADMIN, ROOT],
         name: "remisiones",
         barside: true,
         icon: <FaMoneyCheckAlt />

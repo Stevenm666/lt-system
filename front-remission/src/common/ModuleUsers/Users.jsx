@@ -20,11 +20,20 @@ import TotalPages from "../../share/Pagination/TotalPages";
 
 // useDebounce
 import { useDebounceHook } from "../../hooks/useDebounce";
+import { Loading } from "../../share/Loading/Loading";
+
+// redux
+import { useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
+import { successToast } from "../../utils/misc";
 
 const Users = () => {
   const [listUsers, setListUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [reload, setReload] = useState(false);
+
+  // rol
+  const user = useSelector((state) => state?.user);
 
   // pages
   const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -35,6 +44,8 @@ const Users = () => {
   const [filter, setFilter] = useState("");
 
   const useDebounceFilter = useDebounceHook(filter);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   // check if exists list users
   useEffect(() => {
@@ -64,9 +75,10 @@ const Users = () => {
       const file = e.target.files[0];
       formData.append("file", file);
 
-      postUploadUsers(formData)
+      postUploadUsers(formData, user?.rol)
         .then(() => {
           setTimeout(() => {
+            enqueueSnackbar("Se ha cargado correctamente", successToast);
             setReload((prev) => !prev);
           }, 500);
         })
@@ -148,7 +160,9 @@ const Users = () => {
         </Grid>
         <Box mt={3} style={styles?.containerOverflow}>
           {loading ? (
-            "loading"
+            <Box display="flex" justifyContent="center" mt={8}>
+              <Loading />
+            </Box>
           ) : !listUsers?.length ? (
             <Box display="flex" justifyContent="center" mt={8}>
               No hay usuarios

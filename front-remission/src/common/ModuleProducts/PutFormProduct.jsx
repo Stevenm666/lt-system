@@ -14,9 +14,18 @@ import {
 
 import { putProducts } from "../../services/products";
 
-const PutFormProducts = ({ setReload, product, handleClose }) => {
+// useSnackbar
+import { useSnackbar } from "notistack";
+import { errorToast, successToast } from "../../utils/misc";
 
-  const [changeCode, setChangeCode] = useState(product?.code)
+// redux
+import { useSelector } from "react-redux";
+
+const PutFormProducts = ({ setReload, product, handleClose }) => {
+  const [changeCode, setChangeCode] = useState(product?.code);
+  const user = useSelector(state => state?.user)
+
+  const { enqueueSnackbar } = useSnackbar();
   const {
     control,
     handleSubmit,
@@ -29,16 +38,18 @@ const PutFormProducts = ({ setReload, product, handleClose }) => {
       const submitData = {
         ...values,
         changeCode: !(changeCode == product?.code),
-      }
+        rol: user?.rol
+      };
       putProducts(product?.id, submitData)
         .then(({ data }) => {
           if (data?.status === "success") {
+            enqueueSnackbar("Se ha cambiado correctamente", successToast);
             setReload((prev) => !prev);
             handleClose();
             reset();
           } else {
             // show the message with alert sweet
-            console.log(data?.message);
+            enqueueSnackbar(data?.message, errorToast);
           }
         })
         .catch((e) => console.log({ e }));
