@@ -52,6 +52,21 @@ productsRouter.get("/", (req, res) => {
   }
 });
 
+productsRouter.get("/all", (_, res) => {
+  try{
+    const query = "SELECT * FROM product WHERE status=1";
+    db.handleQuery(query, (err, data) => {
+      if (err){
+        console.log(err);
+        return
+      }
+      utils.sucessResponse(res, data, "success");
+    })
+  }catch(e){
+    console.log(e);
+  }
+});
+
 productsRouter.post("/", (req, res) => {
   try {
     const { name, code, price, rol } = req.body;

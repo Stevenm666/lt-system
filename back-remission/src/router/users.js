@@ -50,4 +50,22 @@ usersRouter.get("/", (req, res) => {
   }
 });
 
+usersRouter.get('/by_document', (req, res) => {
+  try{
+    const { type_identy, identy } = req.query;
+    if (type_identy && identy){
+      const queryByDocument = `SELECT * FROM user WHERE type_identy = "${type_identy}" AND identy = "${identy}"`
+      db.handleQuery(queryByDocument, (err, data) => {
+        if (err){
+          console.log(err)
+          return;
+        }
+        utils.sucessResponse(res, data, "success");
+      })
+    }
+  }catch(e){
+    console.log(e);
+  }
+})
+
 module.exports = usersRouter;

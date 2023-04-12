@@ -6,6 +6,10 @@ export const getProducts = (item, page, filter, status) => {
   );
 };
 
+export const getAllProducts = () => {
+  return instance.get("/products/all");
+};
+
 export const postProducts = (body) => {
   return instance.post("/products", body);
 };
