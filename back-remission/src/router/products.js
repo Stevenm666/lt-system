@@ -53,16 +53,16 @@ productsRouter.get("/", (req, res) => {
 });
 
 productsRouter.get("/all", (_, res) => {
-  try{
+  try {
     const query = "SELECT * FROM product WHERE status=1";
     db.handleQuery(query, (err, data) => {
-      if (err){
+      if (err) {
         console.log(err);
-        return
+        return;
       }
       utils.sucessResponse(res, data, "success");
-    })
-  }catch(e){
+    });
+  } catch (e) {
     console.log(e);
   }
 });
@@ -109,6 +109,28 @@ productsRouter.post("/", (req, res) => {
   }
 });
 
+productsRouter.post("/by-codes", (req, res) => {
+  try {
+    const { codes } = req.body;
+    const arrayCodes = codes.split(",");
+
+    const queryCode = `SELECT name, code FROM product WHERE code IN (${arrayCodes.join(
+      ","
+    )})`;
+
+    db.handleQuery(queryCode, (err, data) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      utils.sucessResponse(res, data, "success");
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// put
 productsRouter.put("/:id", (req, res) => {
   try {
     const { id } = req.params;

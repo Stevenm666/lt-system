@@ -10,6 +10,7 @@ const loginRouter = require('./src/router/login');
 const uploadRouter = require('./src/router/upload');
 const usersRouter = require('./src/router/users');
 const productsRouter = require('./src/router/products');
+const remissionRouter = require('./src/router/remission');
 
 // import middleware
 const middlewareHeaders = require('./src/middlewares/headers');
@@ -30,6 +31,7 @@ app.use('/login', loginRouter);
 app.use('/upload', uploadRouter);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter)
+app.use('/remissions', remissionRouter)
 
 // listen
 app.listen(PORT)

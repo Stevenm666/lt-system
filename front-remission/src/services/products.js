@@ -25,3 +25,7 @@ export const deleteProducts = (id, rol) => {
 export const activeProduct = (id, body) => {
   return instance.put(`/products/${id}/active`, body);
 };
+
+export const getProductByCode = (codes) => {
+  return instance.post(`/products/by-codes`, codes)
+}

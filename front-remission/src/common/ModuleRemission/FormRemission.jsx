@@ -22,7 +22,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useDebounceHook } from "../../hooks/useDebounce";
 
 // utils
-import { cities } from "../../utils/misc";
+import { cities, successToast } from "../../utils/misc";
 import { getUserByDocument } from "../../services/users";
 import { getAllProducts } from "../../services/products";
 
@@ -30,7 +30,15 @@ import { getAllProducts } from "../../services/products";
 import { useSnackbar } from "notistack";
 import { errorToast } from "../../utils/misc";
 
+// services
+import { postRemission } from "../../services/remission";
+
+// redux
+import { useSelector } from "react-redux";
+
 const FormRemission = ({ setReload, handleClose }) => {
+  // redux
+  const user = useSelector((state) => state?.user);
   // form hook
   const {
     handleSubmit,
@@ -66,8 +74,22 @@ const FormRemission = ({ setReload, handleClose }) => {
   };
 
   const onSubmit = (values) => {
-    validateProducts(values?.products);
-    // post to create a new remission
+    try {
+      validateProducts(values?.products); // validate rules products for remission
+      values["is_new"] = !userFound;
+      values["rol"] = user?.rol;
+      postRemission(values)
+        .then(({ data }) => {
+          if (data?.status === "success") {
+            setReload((prev) => !prev);
+            enqueueSnackbar("Se ha creado exitosamente", successToast)
+            handleClose();
+          }
+        })
+        .catch((e) => console.log(e));
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const onError = (e) => {
@@ -80,19 +102,22 @@ const FormRemission = ({ setReload, handleClose }) => {
       if (typeIdenty && debounceFilter) {
         getUserByDocument(typeIdenty, debounceFilter)
           .then(({ data }) => {
-            if (data?.status === "success" && data?.data) {
-              setUserFound(true);
-              setValue("name", data?.data?.name);
-              setValue("phone", data?.data?.phone);
-              setValue("city", data?.data?.city);
-              setValue("addres", data?.data?.addres);
-            } else {
-              // clear values
-              setUserFound(false);
-              setValue("name", "");
-              setValue("phone", "");
-              setValue("city", "");
-              setValue("addres", "");
+            if (data?.status === "success") {
+              console.log(data?.data);
+              if (data?.data?.hasOwnProperty("id")) {
+                setUserFound(true);
+                setValue("name", data?.data?.name);
+                setValue("phone", data?.data?.phone);
+                setValue("city", data?.data?.city);
+                setValue("addres", data?.data?.addres);
+              } else {
+                // clear values
+                setUserFound(false);
+                setValue("name", "");
+                setValue("phone", "");
+                setValue("city", "");
+                setValue("addres", "");
+              }
             }
           })
           .catch((e) => console.log(e));
@@ -321,12 +346,51 @@ const FormRemission = ({ setReload, handleClose }) => {
             )}
           </Grid>
 
+          {/* metho payment*/}
+          <Grid item xs={12}>
+            <Controller
+              rules={{
+                required: {
+                  value: true,
+                  message: "Este campo es obligatorio",
+                },
+              }}
+              name="payment_method"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <FormControl variant="outlined" size="small" fullWidth>
+                  <InputLabel id="payment_method">Metodo de pago</InputLabel>
+                  <Select
+                    {...field}
+                    labelId="payment_method"
+                    id="payment_method"
+                    label="Metodo de pago"
+                    onChange={(e) => field.onChange(e.target.value)}
+                    defaultValue=""
+                  >
+                    <MenuItem value={1}>Efectivo</MenuItem>
+                    <MenuItem value={2}>Bancolombia</MenuItem>
+                    <MenuItem value={3}>Nequi</MenuItem>
+                    <MenuItem value={4}>Daviplata</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+            />
+            {errors?.payment_method && (
+              <FormHelperText error>
+                {errors?.payment_method?.message}
+              </FormHelperText>
+            )}
+          </Grid>
           {/* products */}
           <Grid item xs={12}>
             <Controller
               rules={{
-                required: false,
-                message: "Este campo es obligatorio",
+                required: {
+                  value: false,
+                  message: "Este campo es obligatorio",
+                },
               }}
               name="products"
               control={control}
@@ -336,7 +400,9 @@ const FormRemission = ({ setReload, handleClose }) => {
                   limitTags={1}
                   id="products"
                   options={products}
-                  getOptionLabel={(option) => `${option?.name} - ${option?.code}`}
+                  getOptionLabel={(option) =>
+                    `${option?.name} - ${option?.code}`
+                  }
                   getOptionSelected={(option, value) =>
                     option?.code == value?.code
                   }
@@ -359,6 +425,7 @@ const FormRemission = ({ setReload, handleClose }) => {
               <FormHelperText error>{errors?.products?.message}</FormHelperText>
             )}
           </Grid>
+
           <Grid item xs={6}>
             <Button onClick={handleClose}>
               <Typography>Cancelar</Typography>
