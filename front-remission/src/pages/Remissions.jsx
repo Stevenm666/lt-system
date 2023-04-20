@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
+
+import ModuleRemission from "../common/ModuleRemission/Remission";
 
 const Remissions = () => {
   return (
-    <div>Remissions</div>
-  )
-}
+    <>
+      <ModuleRemission />
+    </>
+  );
+};
 
-export default Remissions
+export default Remissions;

@@ -7,7 +7,7 @@ const connectionDB = {
 
 const sucessResponse = (res, data, message = "") => {
     if(!data?.length) {
-        res.status(404).json({
+        res.json({
             status: 'success',
             data: data || [],
             message 
@@ -16,23 +16,24 @@ const sucessResponse = (res, data, message = "") => {
     }
 
     if (data?.length > 1) {
-        res.status(200).json({
+        res.json({
             status: 'success',
             data: data,
             message 
         })
         return;
+    }else{
+        res.json({
+            status: 'success',
+            data: data[0],
+            message
+        });
+        return;
     }
-    res.status(200).json({
-        status: 'success',
-        data: data[0],
-        message
-    })
 }
 
 const errorReponse = (res, codeStatus, message = "") => {
     res.status(codeStatus).json({
-        status: 'error',
         message,
         data: [],
     })
