@@ -51,6 +51,43 @@ remissionRouter.get("/", (req, res) => {
   }
 });
 
+remissionRouter.get("/by-id/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    const queryGet = `SELECT * FROM remission WHERE id=${id}`;
+    db.handleQuery(queryGet, (err, data) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      utils.sucessResponse(res, data, "success");
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+remissionRouter.put("/by-id/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    const { payment_method, products, user_updated } = req.body;
+    const updateFormat = new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
+    const queryUpdate = `UPDATE remission SET payment_method=${payment_method}, code_product="${products}", user_updated="${user_updated}", updated_at="${updateFormat}", status=1 WHERE id=${id}`;
+    db.handleQuery(queryUpdate, (err, data) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      utils.sucessResponse(res, data, "success");
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 // post
 remissionRouter.post("/", (req, res) => {
   try {
@@ -65,11 +102,14 @@ remissionRouter.post("/", (req, res) => {
       is_new,
       products,
       rol,
+      status,
     } = req.body;
 
-    const date = new Date().toISOString().slice(0, 19).replace("T", " ")
+    const date = new Date().toISOString().slice(0, 19).replace("T", " ");
 
-    const queryRemission = `INSERT INTO remission (code_product, identy_user, payment_method, created_at, user_creator, updated_at, user_updated, status) VALUES ("${products.join(',')}", "${identy}", ${payment_method}, "${date}", "${rol}", "${date}", "${rol}", 1)`;
+    const queryRemission = `INSERT INTO remission (code_product, identy_user, payment_method, created_at, user_creator, updated_at, user_updated, status) VALUES ("${products.join(
+      ","
+    )}", "${identy}", ${payment_method}, "${date}", "${rol}", "${date}", "${rol}", 2)`;
 
     if (is_new) {
       // the user is new then create
@@ -90,6 +130,27 @@ remissionRouter.post("/", (req, res) => {
     utils.errorReponse(res, 500, "Error en la conexión a la base de datos");
   }
 });
+
+// delete
+remissionRouter.put("/cancel-id/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rol } = req.body;
+    const date = new Date().toISOString().slice(0, 19).replace("T", " ");
+    const queryDelete = `UPDATE remission SET status=3, user_updated="${rol}", updated_at="${date}", code_product="", payment_method=NULL WHERE id=${id}`;
+    db.handleQuery(queryDelete, (err, data) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      utils.sucessResponse(res, data, "success");
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// helpers
 
 const handleCreateRemission = (queryRemission, res) => {
   db.handleQuery(queryRemission, (err, data) => {

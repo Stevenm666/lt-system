@@ -68,4 +68,22 @@ usersRouter.get('/by_document', (req, res) => {
   }
 })
 
+usersRouter.get('/by_document_only', (req, res) => {
+  try{
+    const { identy } = req.query;
+    if (identy){
+      const queryByDocument = `SELECT * FROM user WHERE identy = "${identy}"`
+      db.handleQuery(queryByDocument, (err, data) => {
+        if (err){
+          console.log(err)
+          return;
+        }
+        utils.sucessResponse(res, data, "success");
+      })
+    }
+  }catch(e){
+    console.log(e);
+  }
+})
+
 module.exports = usersRouter;

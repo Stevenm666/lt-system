@@ -1,23 +1,28 @@
-import { useState, useMemo, Suspense } from 'react';
+import { useState, useMemo, Suspense } from "react";
 
 // MUI
 import { Box, Grid } from "@material-ui/core";
 
 // styles
 import { styles } from "../styles/layout.styles.js";
-import AsideSection from '../common/AsideCommon/AsideSection.jsx';
-import { useLocation } from 'react-router-dom';
+import AsideSection from "../common/AsideCommon/AsideSection.jsx";
+import { useLocation } from "react-router-dom";
 
 // components
 
 const Layout = ({ authRouters = [] }) => {
-  const location = useLocation()
+  const location = useLocation();
 
   const useComponent = useMemo(() => {
-    if (authRouters.length){
-      return authRouters.filter((el) => el.path === location.pathname);
+    if (authRouters.length) {
+      const element = authRouters.filter((el) => el.path === location.pathname); // principal router
+      if (element?.length) {
+        return element;
+      } else {
+        return authRouters[3].children; // only sub router for the moment
+      }
     }
-  }, [location])
+  }, [location]);
 
   return (
     <Box style={styles.container}>
@@ -27,15 +32,17 @@ const Layout = ({ authRouters = [] }) => {
             <AsideSection routers={authRouters} styles={styles} />
           </Box>
         </Grid>
-        <Grid item xs={1}/>
+        <Grid item xs={1} />
         <Grid item xs={9}>
           <Suspense fallback="loading...">
-            {useComponent?.map((el, i) => ( <div key={i}>{el?.element}</div>))}
+            {useComponent?.map((el, i) => (
+              <div key={i}>{el?.element}</div>
+            ))}
           </Suspense>
         </Grid>
       </Grid>
     </Box>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

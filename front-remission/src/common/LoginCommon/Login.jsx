@@ -109,7 +109,6 @@ const Login = () => {
                   }}
                   name="username"
                   control={control}
-                  defaultValue=""
                   render={({ field }) => (
                     <Box style={styles?.containerInput}>
                       <Box>
@@ -149,7 +148,6 @@ const Login = () => {
                   }}
                   name="password"
                   control={control}
-                  defaultValue=""
                   render={({ field }) => (
                     <Box style={styles?.containerInput}>
                       <Box>

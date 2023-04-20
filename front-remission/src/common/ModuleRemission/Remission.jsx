@@ -40,33 +40,6 @@ const Remission = () => {
 
   const [pages, setPages] = useState(1);
 
-  // EXPANDED
-  const [expanded, setExpanded] = useState(false);
-  const [loadingByCode, setLoadingByCode] = useState(false);
-  const [products, setProducts] = useState([]);
-
-  const handleChange = (panel, codes) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-    try {
-      setLoadingByCode(true);
-      getProductByCode({ codes })
-        .then(({ data }) => {
-          if (data?.status === "success") {
-            if (Array.isArray(data?.data)) {
-              setProducts(data?.data);
-            }else{
-              setProducts([data?.data])
-            }
-          }
-        })
-        .catch((e) => console.log(e));
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoadingByCode(false);
-    }
-  };
-
   useEffect(() => {
     try {
       setLoading(true);
@@ -134,7 +107,7 @@ const Remission = () => {
           </Grid>
           <Grid item xs={3}>
             <Box>
-              <Typography style={styles?.textHeader}>Metodo de pago</Typography>
+              <Typography style={styles?.textHeader}>Estado</Typography>
             </Box>
           </Grid>
           <Grid item xs={2}>
@@ -159,17 +132,9 @@ const Remission = () => {
             </Box>
           ) : (
             listRemission?.map((remission, i) => (
-              <>
-                <ItemRemission
-                  remission={remission}
-                  idx={i}
-                  key={i}
-                  handleChange={handleChange}
-                  expanded={expanded}
-                  loadingByCode={loadingByCode}
-                  products={products}
-                />
-              </>
+              <Box key={i}>
+                <ItemRemission remission={remission} />
+              </Box>
             ))
           )}
         </Box>

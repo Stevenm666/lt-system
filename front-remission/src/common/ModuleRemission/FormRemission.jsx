@@ -65,19 +65,23 @@ const FormRemission = ({ setReload, handleClose }) => {
   const validateProducts = (products) => {
     if (!products?.length) {
       enqueueSnackbar("Se necesita al menos un producto", errorToast);
-      return;
+      return -1 ;
     }
     if (products && products?.length > 10) {
       enqueueSnackbar("Maximo 10 productos", errorToast);
-      return;
+      return -1;
     }
   };
 
   const onSubmit = (values) => {
     try {
-      validateProducts(values?.products); // validate rules products for remission
+      const valid = validateProducts(values?.products); // validate rules products for remission
+      if (valid == - 1){
+        return;
+      }
       values["is_new"] = !userFound;
       values["rol"] = user?.rol;
+      values['payment_method'] = null;
       postRemission(values)
         .then(({ data }) => {
           if (data?.status === "success") {
@@ -345,44 +349,7 @@ const FormRemission = ({ setReload, handleClose }) => {
               <FormHelperText error>{errors?.addres?.message}</FormHelperText>
             )}
           </Grid>
-
-          {/* metho payment*/}
-          <Grid item xs={12}>
-            <Controller
-              rules={{
-                required: {
-                  value: true,
-                  message: "Este campo es obligatorio",
-                },
-              }}
-              name="payment_method"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <FormControl variant="outlined" size="small" fullWidth>
-                  <InputLabel id="payment_method">Metodo de pago</InputLabel>
-                  <Select
-                    {...field}
-                    labelId="payment_method"
-                    id="payment_method"
-                    label="Metodo de pago"
-                    onChange={(e) => field.onChange(e.target.value)}
-                    defaultValue=""
-                  >
-                    <MenuItem value={1}>Efectivo</MenuItem>
-                    <MenuItem value={2}>Bancolombia</MenuItem>
-                    <MenuItem value={3}>Nequi</MenuItem>
-                    <MenuItem value={4}>Daviplata</MenuItem>
-                  </Select>
-                </FormControl>
-              )}
-            />
-            {errors?.payment_method && (
-              <FormHelperText error>
-                {errors?.payment_method?.message}
-              </FormHelperText>
-            )}
-          </Grid>
+       
           {/* products */}
           <Grid item xs={12}>
             <Controller

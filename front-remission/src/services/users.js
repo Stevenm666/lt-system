@@ -5,5 +5,11 @@ export const getUsers = (item = 5, page = 1, filter = "") => {
 };
 
 export const getUserByDocument = (type, document) => {
-  return instance.get(`/users/by_document?type_identy=${type}&identy=${document}`);
+  return instance.get(
+    `/users/by_document?type_identy=${type}&identy=${document}`
+  );
+};
+
+export const getUserByDocumentOnly = (document) => {
+  return instance.get(`/users/by_document_only?identy=${document}`);
 };
