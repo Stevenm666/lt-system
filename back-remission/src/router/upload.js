@@ -13,34 +13,28 @@ const readXlsxFile = require("read-excel-file/node");
 
 const upload = multer({ dest: "uploads/" });
 
-uploadRouter.post("/users/:rol", upload.single("file"), async (req, res) => {
+uploadRouter.post("/users/:rol", upload.single("file"), (req, res) => {
   try {
     const { rol } = req.params;
     readXlsxFile(req.file.path)
       .then((rows) => {
-        rows.forEach((item) => {
+        rows.forEach(async (item) => {
           const queryIdentifier = `SELECT * FROM user WHERE identy=${item[2]}`;
 
-          db.handleQuery(queryIdentifier, (err, result) => {
-            if (err) {
-              res.send(err);
-              return;
-            }
-            if (!result.length) {
-              const queryCreate = `
+          const result = await db.handleQuery(queryIdentifier);
+          if (!result.length) {
+            const queryCreate = `
                   INSERT INTO user (name, type_identy, identy, addres, city, phone, created_at, created_by) 
                   VALUES ("${item[0]}", "${item[1]}", ${item[2]}, "${
-                item[6]
-              }", "${item[7]}", "${item[8]}", "${new Date()
-                .toISOString()
-                .slice(0, 19)
-                .replace("T", " ")}", "${rol}")
+              item[6]
+            }", "${item[7]}", "${item[8]}", "${new Date()
+              .toISOString()
+              .slice(0, 19)
+              .replace("T", " ")}", "${rol}")
                 `;
-              db.handleQuery(queryCreate, (err, result) => {
-                if (err) console.log(err);
-              });
-            }
-          });
+
+            await db.handleQuery(queryCreate);
+          }
         });
       })
       .then(() => {
@@ -55,35 +49,28 @@ uploadRouter.post("/users/:rol", upload.single("file"), async (req, res) => {
   }
 });
 
-uploadRouter.post("/products/:rol", upload.single("file"), async (req, res) => {
+uploadRouter.post("/products/:rol", upload.single("file"), (req, res) => {
   try {
     const { rol } = req.params;
     readXlsxFile(req.file.path)
       .then((rows) => {
-        rows.forEach((item) => {
+        rows.forEach(async (item) => {
           const queryIdentifier = `SELECT * FROM product WHERE code="${item[1]}" AND status=1`;
 
-          db.handleQuery(queryIdentifier, (err, result) => {
-            if (err) {
-              console.log(err);
-              return;
-            }
-            if (!result.length) {
-              const queryCreate = `
+          const result = await db.handleQuery(queryIdentifier);
+          if (!result.length) {
+            const queryCreate = `
                   INSERT INTO product (name, code, price, created_at, updated_at, status, updated_by) 
                   VALUES ("${item[2]}", "${item[1]}", ${item[11]}, "${new Date()
-                .toISOString()
-                .slice(0, 19)
-                .replace("T", " ")}", "${new Date()
-                .toISOString()
-                .slice(0, 19)
-                .replace("T", " ")}", 1, "${rol}")
+              .toISOString()
+              .slice(0, 19)
+              .replace("T", " ")}", "${new Date()
+              .toISOString()
+              .slice(0, 19)
+              .replace("T", " ")}", 1, "${rol}")
                 `;
-              db.handleQuery(queryCreate, (err, result) => {
-                if (err) console.log(err);
-              });
-            }
-          });
+            await db.handleQuery(queryCreate);
+          }
         });
       })
       .then(() => {

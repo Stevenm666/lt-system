@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 // MUI
-import { Box, Button, Grid, Typography, TextField } from "@material-ui/core";
+import { Box, Button, Grid, Typography, TextField, FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 
 // styles
 import { styles } from "../../styles/remission.style";
@@ -39,13 +39,16 @@ const Remission = () => {
   const useDebounceFilter = useDebounceHook(filter);
 
   const [pages, setPages] = useState(1);
+  const [status, setStatus] = useState("1, 2, 3")
+  console.log(status)
 
   useEffect(() => {
     try {
       setLoading(true);
-      getRemission(itemsPerPage, pages, useDebounceFilter)
+      getRemission(itemsPerPage, pages, useDebounceFilter, status)
         .then(({ data }) => {
           if (data?.status === "success") {
+            console.log({data})
             setListRemission(data?.data?.data);
             setTotalPages(data.data?.total_pages);
             if (pages > data?.data?.total_pages) {
@@ -59,7 +62,7 @@ const Remission = () => {
     } finally {
       setLoading(false);
     }
-  }, [itemsPerPage, pages, useDebounceFilter, reload]);
+  }, [itemsPerPage, pages, useDebounceFilter, reload, status]);
 
   return (
     <Box style={styles?.container}>
@@ -81,7 +84,22 @@ const Remission = () => {
             <Typography style={styles.title}>Remisiones</Typography>
           </Box>
         </Grid>
-        <Grid item xs={6} />
+        <Grid item xs={4} />
+        <Grid item xs={2}>
+          <FormControl variant="outlined" size="small">
+            <InputLabel id="status">Estado</InputLabel>
+            <Select
+              labelId="status"
+              id="status"
+              label="Estado"
+              defaultValue={"1, 3, 2"}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <MenuItem value={"1, 3, 2"}>Todos</MenuItem>
+              <MenuItem value={"2"}>Pendiente</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
         <Grid item xs={1}>
           <Button variant="outlined" onClick={() => setOpen(true)}>
             <Typography>Crear</Typography>

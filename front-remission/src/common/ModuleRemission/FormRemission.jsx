@@ -36,6 +36,10 @@ import { postRemission } from "../../services/remission";
 // redux
 import { useSelector } from "react-redux";
 
+// dialog
+import SharedDialog from "../../share/Dialog/SharedDialog";
+import ChooseProducts from "./ChooseProducts";
+
 const FormRemission = ({ setReload, handleClose }) => {
   // redux
   const user = useSelector((state) => state?.user);
@@ -62,10 +66,14 @@ const FormRemission = ({ setReload, handleClose }) => {
   // get products
   const [products, setProducts] = useState([]);
 
+  // choose products - modal
+  const [openModal, setOpenModal] = useState(false);
+  const [productSelected, setProductSelected] = useState([]);
+
   const validateProducts = (products) => {
     if (!products?.length) {
       enqueueSnackbar("Se necesita al menos un producto", errorToast);
-      return -1 ;
+      return -1;
     }
     if (products && products?.length > 10) {
       enqueueSnackbar("Maximo 10 productos", errorToast);
@@ -75,18 +83,21 @@ const FormRemission = ({ setReload, handleClose }) => {
 
   const onSubmit = (values) => {
     try {
-      const valid = validateProducts(values?.products); // validate rules products for remission
-      if (valid == - 1){
-        return;
-      }
       values["is_new"] = !userFound;
       values["rol"] = user?.rol;
-      values['payment_method'] = null;
+      values["payment_method"] = null;
+      values["products"] = productSelected
+        ? productSelected?.map((el) => el?.code).join(",")
+        : "";
+      const valid = validateProducts(productSelected); // validate rules products for remission
+      if (valid == -1) {
+        return;
+      }
       postRemission(values)
         .then(({ data }) => {
           if (data?.status === "success") {
             setReload((prev) => !prev);
-            enqueueSnackbar("Se ha creado exitosamente", successToast)
+            enqueueSnackbar("Se ha creado exitosamente", successToast);
             handleClose();
           }
         })
@@ -107,7 +118,6 @@ const FormRemission = ({ setReload, handleClose }) => {
         getUserByDocument(typeIdenty, debounceFilter)
           .then(({ data }) => {
             if (data?.status === "success") {
-              console.log(data?.data);
               if (data?.data?.hasOwnProperty("id")) {
                 setUserFound(true);
                 setValue("name", data?.data?.name);
@@ -148,6 +158,23 @@ const FormRemission = ({ setReload, handleClose }) => {
 
   return (
     <Box>
+      <SharedDialog
+        open={openModal}
+        title="Ecoge los productos"
+        handleClose={() => setOpenModal(false)}
+        body={
+          <ChooseProducts
+            control={control}
+            errors={errors}
+            products={products}
+            handleClose={() => setOpenModal(false)}
+            setValue={setValue}
+            setProductSelected={setProductSelected}
+            productsSelected={productSelected}
+          />
+        }
+      />
+
       <form onSubmit={handleSubmit(onSubmit, onError)}>
         <Grid container spacing={2}>
           {/* type_identy */}
@@ -349,48 +376,34 @@ const FormRemission = ({ setReload, handleClose }) => {
               <FormHelperText error>{errors?.addres?.message}</FormHelperText>
             )}
           </Grid>
-       
-          {/* products */}
+
+          {/* observation */}
           <Grid item xs={12}>
             <Controller
-              rules={{
-                required: {
-                  value: false,
-                  message: "Este campo es obligatorio",
-                },
-              }}
-              name="products"
+              name="observation"
               control={control}
               render={({ field }) => (
-                <Autocomplete
-                  multiple
-                  limitTags={1}
-                  id="products"
-                  options={products}
-                  getOptionLabel={(option) =>
-                    `${option?.name} - ${option?.code}`
-                  }
-                  getOptionSelected={(option, value) =>
-                    option?.code == value?.code
-                  }
-                  onChange={(_event, newValue) => {
-                    field.onChange(newValue.map((value) => value?.code));
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      fullWidth
-                      size="small"
-                      variant="outlined"
-                      label="Productos"
-                    />
-                  )}
+                <TextField
+                  {...field}
+                  multiline
+                  variant="outlined"
+                  label="Observaciones"
+                  size="small"
+                  fullWidth
+                  onChange={(e) => field.onChange(e.target.value)}
                 />
               )}
             />
-            {errors?.products && (
-              <FormHelperText error>{errors?.products?.message}</FormHelperText>
-            )}
+          </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => setOpenModal(true)}
+            >
+              Escoger productos
+            </Button>
           </Grid>
 
           <Grid item xs={6}>

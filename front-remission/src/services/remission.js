@@ -1,7 +1,7 @@
 import { instance } from "./instance";
 
-export const getRemission = (item = 5, page = 1, filter = "") => {
-  return instance.get(`/remissions?item=${item}&page=${page}&filter=${filter}`);
+export const getRemission = (item = 5, page = 1, filter = "", status) => {
+  return instance.get(`/remissions?item=${item}&page=${page}&status=${status}&filter=${filter}`);
 };
 
 export const getRemissionById = (id) => {

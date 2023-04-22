@@ -1,19 +1,21 @@
-const mysql = require('mysql')
-const utils = require('../utils/utils')
+const mysql = require("mysql");
+const utils = require("../utils/utils");
 
-const handleQuery = (sqlQuery, fn) => {
-    try {
-        const connection = mysql.createConnection(utils.connectionDB);
-        connection.connect();
-        connection.query(sqlQuery, (err, rows) => {
-            fn(err, rows ? JSON.parse(JSON.stringify(rows)) : []); // use callback to get results
-        })
-        connection.end();
-    }catch(e){
-        comsole.error(e)
-    }
-}
-  
+const handleQuery = (sqlQuery) => {
+  return new Promise((resolve, reject) => {
+    const connection = mysql.createConnection(utils.connectionDB);
+    connection.connect();
+    connection.query(sqlQuery, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows ? JSON.parse(JSON.stringify(rows)) : []);
+      }
+      connection.end();
+    });
+  });
+};
+
 module.exports = {
-    handleQuery,
+  handleQuery,
 };

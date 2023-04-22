@@ -26,19 +26,32 @@ import { useSelector } from "react-redux";
 
 // services
 import { putRemissionById } from "../../services/remission";
+import SharedDialog from "../../share/Dialog/SharedDialog";
+import ChooseProducts from "./ChooseProducts";
 
 // @props defaultValues is a object with default values
-const ModalPutRemission = ({ defaultValues, id, setReload, handleClose }) => {
+const ModalPutRemission = ({
+  defaultValues,
+  id,
+  setReload,
+  handleClose,
+  defaultProducts,
+}) => {
   // redux
   const user = useSelector((state) => state?.user);
   const [allProducts, setAllProducts] = useState([]);
   const [isEdit, setEdit] = useState(false);
+
+  // choose products - modal
+  const [openModal, setOpenModal] = useState(false);
+  const [productSelected, setProductSelected] = useState(defaultProducts ?? []);
 
   // form states
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm();
 
   // useSnackbar
@@ -58,16 +71,17 @@ const ModalPutRemission = ({ defaultValues, id, setReload, handleClose }) => {
 
   const onSubmit = (values) => {
     try {
-      const valid = validateProducts(values?.products); // validate rules products for remission
+      values["products"] = productSelected
+        ? productSelected?.map((el) => el?.code).join(",")
+        : "";
+      values["user_updated"] = user?.rol;
+      console.log({values, productSelected})
+      const valid = validateProducts(productSelected); // validate rules products for remission
       if (valid == -1) {
         return;
       }
-      values["products"] = isEdit
-        ? values?.products
-        : values.products.map((el) => el?.code).join(","); // change data to accept it in back-end
-      values["user_updated"] = user?.rol;
       // change status to completed - 1
-      console.log(parseInt(id), values);
+      console.log({ values });
       putRemissionById(parseInt(id), values)
         .then(({ data }) => {
           if (data?.status === "success") {
@@ -101,6 +115,23 @@ const ModalPutRemission = ({ defaultValues, id, setReload, handleClose }) => {
   //console.log({ allProducts, defaultValues, id });
   return (
     <Box>
+      <SharedDialog
+        open={openModal}
+        title="Ecoge los productos"
+        handleClose={() => setOpenModal(false)}
+        body={
+          <ChooseProducts
+            control={control}
+            errors={errors}
+            products={allProducts}
+            handleClose={() => setOpenModal(false)}
+            setValue={setValue}
+            setProductSelected={setProductSelected}
+            productsSelected={productSelected}
+            isEdit={true}
+          />
+        }
+      />
       <form onSubmit={handleSubmit(onSubmit, onError)}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -139,51 +170,37 @@ const ModalPutRemission = ({ defaultValues, id, setReload, handleClose }) => {
               </FormHelperText>
             )}
           </Grid>
-          {/* products */}
+
+          {/* observation */}
           <Grid item xs={12}>
             <Controller
-              rules={{
-                required: {
-                  value: false,
-                  message: "Este campo es obligatorio",
-                },
-              }}
-              name="products"
+              name="observation"
               control={control}
-              defaultValue={defaultValues?.defaultProducts}
+              defaultValue={defaultValues?.defaultObservation}
               render={({ field }) => (
-                <Autocomplete
-                  multiple
-                  limitTags={1}
-                  id="products"
-                  options={allProducts}
-                  defaultValue={defaultValues?.defaultProducts}
-                  getOptionLabel={(option) =>
-                    `${option?.name} - ${option?.code}`
-                  }
-                  getOptionSelected={(option, value) =>
-                    option?.code == value?.code
-                  }
-                  onChange={(_event, newValue) => {
-                    field.onChange(newValue.map((value) => value?.code));
-                    setEdit(true);
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      fullWidth
-                      size="small"
-                      variant="outlined"
-                      label="Productos"
-                    />
-                  )}
+                <TextField
+                  {...field}
+                  multiline
+                  variant="outlined"
+                  label="Observaciones"
+                  size="small"
+                  fullWidth
+                  onChange={(e) => field.onChange(e.target.value)}
                 />
               )}
             />
-            {errors?.products && (
-              <FormHelperText error>{errors?.products?.message}</FormHelperText>
-            )}
           </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => setOpenModal(true)}
+            >
+              Escoger productos
+            </Button>
+          </Grid>
+
           <Grid item xs={6}>
             <Button onClick={() => handleClose()}>Cancelar</Button>
           </Grid>
