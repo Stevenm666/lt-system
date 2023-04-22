@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Box, Button, Grid, Typography } from "@material-ui/core";
 import { getRemissionById } from "../../services/remission";
 
@@ -75,7 +75,6 @@ const RemissionById = ({ id }) => {
     // get name of products
     try {
       setLoadingByCode(true);
-      console.log({ remission });
       if (remission?.code_product) {
         getProductByCode({ codes: remission?.code_product })
           .then(({ data }) => {
@@ -100,8 +99,9 @@ const RemissionById = ({ id }) => {
 
   // defaultValue let
   const defaultValue = {
-    defaultProducts: products,
+    defaultProducts: remission?.code_product ? products : [],
     defaultPaymentMethod: remission?.payment_method,
+    defaultObservation: remission?.observation
   };
 
   return (
@@ -117,6 +117,7 @@ const RemissionById = ({ id }) => {
             id={id}
             setReload={setReload}
             handleClose={() => setOpen(false)}
+            defaultProducts={products}
           />
         }
       />
