@@ -1,3 +1,5 @@
+// React
+import { useMemo } from "react";
 // MUI
 import { Box, Grid, Typography } from "@material-ui/core";
 
@@ -10,9 +12,20 @@ import { AiOutlineEye } from "react-icons/ai";
 // navigate
 import { useNavigate } from "react-router-dom";
 
+// date
+import { addDays, addHours } from "date-fns";
+
 const ItemRemission = ({ remission }) => {
   const statusArray = ["Completado", "Pendiente", "Cancelado"]; // remission.status - 1
   const navigate = useNavigate();
+
+  const isPending = useMemo(() => {
+    if (remission?.status == 2) {
+      let createdAtPlusFiveDays = new Date(remission?.created_at);
+      return new Date() > addDays(createdAtPlusFiveDays, 5) ? true : false;
+    }
+    return false;
+  }, [remission]);
 
   return (
     <Box mt={2} style={styles?.container}>
@@ -22,7 +35,8 @@ const ItemRemission = ({ remission }) => {
         </Grid>
         <Grid item xs={3}>
           <Typography>
-            {statusArray[parseInt(remission?.status) - 1]}
+            {statusArray[parseInt(remission?.status) - 1]}{" "}
+            <span>{isPending ? "+ 5 días" : ""}</span>
           </Typography>
         </Grid>
         <Grid item xs={2}>

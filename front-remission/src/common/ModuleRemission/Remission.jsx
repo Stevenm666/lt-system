@@ -40,7 +40,6 @@ const Remission = () => {
 
   const [pages, setPages] = useState(1);
   const [status, setStatus] = useState("1, 2, 3")
-  console.log(status)
 
   useEffect(() => {
     try {
@@ -48,7 +47,6 @@ const Remission = () => {
       getRemission(itemsPerPage, pages, useDebounceFilter, status)
         .then(({ data }) => {
           if (data?.status === "success") {
-            console.log({data})
             setListRemission(data?.data?.data);
             setTotalPages(data.data?.total_pages);
             if (pages > data?.data?.total_pages) {
