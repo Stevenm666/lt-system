@@ -13,6 +13,11 @@ import { getProductByCode } from "../../services/products";
 import SharedDialog from "../../share/Dialog/SharedDialog";
 import ModalPutRemission from "./ModalPutRemission";
 import CancelRemission from "./CancelRemission";
+import { getGeneratePDF } from "../../services/pdf";
+import { useSnackbar } from "notistack";
+import { successToast } from "../../utils/misc";
+
+import { saveAs } from "file-saver";
 
 const RemissionById = ({ id }) => {
   // states
@@ -20,6 +25,9 @@ const RemissionById = ({ id }) => {
   const [products, setProducts] = useState([]);
   const [loadingByCode, setLoadingByCode] = useState(false);
   const [reload, setReload] = useState(false);
+  const [pdf, setPdf] = useState(null);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   // modal
   const [open, setOpen] = useState(false);
@@ -101,7 +109,24 @@ const RemissionById = ({ id }) => {
   const defaultValue = {
     defaultProducts: remission?.code_product ? products : [],
     defaultPaymentMethod: remission?.payment_method,
-    defaultObservation: remission?.observation
+    defaultObservation: remission?.observation,
+  };
+
+  // handleGeneratePDF
+  const handleGeneratePDF = (id) => {
+    try {
+      getGeneratePDF(id)
+        .then(({ data }) => {
+          console.log(data);
+          const file = new Blob([data], { type: "application/pdf" });
+          const fileURL = URL.createObjectURL(file);
+          window.open(fileURL);
+          saveAs(file, `remission_${id}.pdf`); // save the file
+        })
+        .catch((e) => console.log(e));
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -179,7 +204,11 @@ const RemissionById = ({ id }) => {
         </Grid>
         <Grid item xs={2}>
           <Box>
-            <Button variant="outlined" disabled={ISCANCEL}>
+            <Button
+              variant="outlined"
+              disabled={ISCANCEL}
+              onClick={() => handleGeneratePDF(remission?.id)}
+            >
               PDF
             </Button>
           </Box>

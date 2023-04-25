@@ -11,6 +11,7 @@ const uploadRouter = require('./src/router/upload');
 const usersRouter = require('./src/router/users');
 const productsRouter = require('./src/router/products');
 const remissionRouter = require('./src/router/remission');
+const pdfRouter = require('./src/router/pdf');
 
 // import middleware
 const middlewareHeaders = require('./src/middlewares/headers');
@@ -24,6 +25,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use((req, res, next) => middlewareHeaders(req, res, next)) // validate headers
+app.set('view engine', 'hbs'); // allow hbs files
 
 
 // http request
@@ -32,6 +34,7 @@ app.use('/upload', uploadRouter);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter)
 app.use('/remissions', remissionRouter)
+app.use('/pdf', pdfRouter)
 
 // listen
 app.listen(PORT)
