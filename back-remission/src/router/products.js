@@ -94,9 +94,11 @@ productsRouter.post("/by-codes", async (req, res) => {
 
     if (arrayCodes.length > 0) {
       for (el of arrayCodes) {
-        const querySelect = `SELECT name, code FROM product WHERE code = ${el}`;
-        const result = await db.handleQuery(querySelect);
-        data.push(result[0]);
+        if (el) {
+          const querySelect = `SELECT name, code FROM product WHERE code = ${el}`;
+          const result = await db.handleQuery(querySelect);
+          data.push(result[0]);
+        }
       }
       utils.sucessResponse(res, data, "success");
       return;
