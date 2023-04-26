@@ -34,6 +34,7 @@ const RemissionById = ({ id }) => {
   const [cancelOpen, setCancelOpen] = useState(false);
 
   const [user, setUser] = useState({});
+  const [generatePdfLoading, setGeneratePdfLoading] = useState(false)
 
   const ISCANCEL = remission?.status == 3;
 
@@ -115,6 +116,7 @@ const RemissionById = ({ id }) => {
   // handleGeneratePDF
   const handleGeneratePDF = (id) => {
     try {
+      setGeneratePdfLoading(true)
       getGeneratePDF(id)
         .then(({ data }) => {
           console.log(data);
@@ -122,6 +124,7 @@ const RemissionById = ({ id }) => {
           const fileURL = URL.createObjectURL(file);
           window.open(fileURL);
           saveAs(file, `remission_${id}.pdf`); // save the file
+          setGeneratePdfLoading(false)
         })
         .catch((e) => console.log(e));
     } catch (e) {
@@ -206,7 +209,7 @@ const RemissionById = ({ id }) => {
           <Box>
             <Button
               variant="outlined"
-              disabled={ISCANCEL}
+              disabled={ISCANCEL || generatePdfLoading}
               onClick={() => handleGeneratePDF(remission?.id)}
             >
               PDF

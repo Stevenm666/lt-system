@@ -30,7 +30,7 @@ const ListProducts = ({ product, setReload, status }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   // redux
-  const user = useSelector(state => state.user);
+  const user = useSelector((state) => state.user);
 
   // delete product
   const handleDelProduct = () => {
@@ -48,23 +48,23 @@ const ListProducts = ({ product, setReload, status }) => {
   };
 
   const handleActive = () => {
-    try{
+    try {
       const submitData = {
         status: 1,
-        rol: user?.rol
-      }
+        rol: user?.rol,
+      };
       activeProduct(product?.id, submitData)
-        .then(({data}) => {
-          if (data?.status === "success"){
+        .then(({ data }) => {
+          if (data?.status === "success") {
             enqueueSnackbar("Se ha recuperado exitosamente", successToast);
-            setReload(prev => !prev);
+            setReload((prev) => !prev);
           }
         })
-        .catch(e => console.log(e))
-    }catch(e){
+        .catch((e) => console.log(e));
+    } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   // put product
   return (
@@ -99,7 +99,12 @@ const ListProducts = ({ product, setReload, status }) => {
           </Grid>
           <Grid item xs={2}>
             <Box>
-              <Typography style={styles?.textItem}>{product?.price}</Typography>
+              <Typography style={styles?.textItem}>
+                {parseInt(product?.price).toLocaleString("es-CO", {
+                  style: "currency",
+                  currency: "COP",
+                })}
+              </Typography>
             </Box>
           </Grid>
           <Grid item xs={3}>
@@ -127,7 +132,11 @@ const ListProducts = ({ product, setReload, status }) => {
               ) : (
                 <>
                   <Box>
-                    <Button variant="outlined" style={styles?.backButton} onClick={() => handleActive()}>
+                    <Button
+                      variant="outlined"
+                      style={styles?.backButton}
+                      onClick={() => handleActive()}
+                    >
                       <Typography style={styles?.backText}>
                         Recuperar
                       </Typography>
