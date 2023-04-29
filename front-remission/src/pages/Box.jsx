@@ -1,8 +1,12 @@
 import React from 'react'
 
+import ModuleBox from '../common/ModuleBox/Box'
+
 const Home = () => {
   return (
-    <div>Home</div>
+    <>
+      <ModuleBox />
+    </>
   )
 }
 

@@ -13,7 +13,6 @@ remissionRouter.get("/", async (req, res) => {
     const countQuery = `SELECT COUNT(*) as count FROM remission WHERE (identy_user LIKE "${filter}%" OR code_product LIKE "%${filter}%") AND status IN (${status
       .split(",")
       .join(",")})`;
-    console.log(countQuery);
 
     const count = await db.handleQuery(countQuery);
     if (!count[0]) utils.sucessResponse(res, [], "success");
@@ -26,7 +25,6 @@ remissionRouter.get("/", async (req, res) => {
     const queryLimitOffset = `SELECT * FROM remission WHERE (identy_user LIKE "${filter}%" OR code_product LIKE "%${filter}%") AND status IN (${status
       .split(",")
       .join(",")}) ORDER BY id DESC LIMIT ${item} offset ${offset}`;
-    console.log({ queryLimitOffset });
 
     const data = await db.handleQuery(queryLimitOffset);
 
