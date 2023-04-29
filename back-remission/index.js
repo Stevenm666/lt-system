@@ -25,6 +25,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use((req, res, next) => middlewareHeaders(req, res, next)) // validate headers
+app.use(express.static('public')); // static image
 app.set('view engine', 'hbs'); // allow hbs files
 
 
