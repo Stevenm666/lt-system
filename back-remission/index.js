@@ -12,6 +12,7 @@ const usersRouter = require('./src/router/users');
 const productsRouter = require('./src/router/products');
 const remissionRouter = require('./src/router/remission');
 const pdfRouter = require('./src/router/pdf');
+const boxRouter = require('./src/router/box');
 
 // import middleware
 const middlewareHeaders = require('./src/middlewares/headers');
@@ -36,6 +37,7 @@ app.use('/users', usersRouter);
 app.use('/products', productsRouter)
 app.use('/remissions', remissionRouter)
 app.use('/pdf', pdfRouter)
+app.use('/box', boxRouter)
 
 // listen
 app.listen(PORT)
