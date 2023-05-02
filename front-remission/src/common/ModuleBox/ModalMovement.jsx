@@ -40,7 +40,7 @@ const ModalMovement = ({ handleClose, dataBox, setReloadMovement }) => {
         title="Ingresos"
         body={
           <ModalOutcomes
-            handleClose={() => setIncomes(false)}
+            handleClose={() => setOutcomes(false)}
             handleCloseAll={() => {
               setIncomes(false);
               handleClose();

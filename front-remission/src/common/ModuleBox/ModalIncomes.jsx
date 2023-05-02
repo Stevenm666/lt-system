@@ -86,7 +86,7 @@ const ModalIncomes = ({ handleClose, handleCloseAll, dataBox, setReloadMovement 
                     onChange={(e) => field.onChange(e.target.value)}
                   >
                     <MenuItem value="FV">FV</MenuItem>
-                    <MenuItem value="ST">RM</MenuItem>
+                    <MenuItem value="RM">RM</MenuItem>
                     <MenuItem value="ST">ST</MenuItem>
                   </Select>
                 </FormControl>
