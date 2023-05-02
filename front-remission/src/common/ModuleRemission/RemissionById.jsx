@@ -34,6 +34,7 @@ const RemissionById = ({ id }) => {
   const [cancelOpen, setCancelOpen] = useState(false);
 
   const [user, setUser] = useState({});
+  console.log({remission})
   const [generatePdfLoading, setGeneratePdfLoading] = useState(false)
 
   const ISCANCEL = remission?.status == 3;

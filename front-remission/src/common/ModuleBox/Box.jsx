@@ -16,11 +16,13 @@ import { es } from "date-fns/locale";
 import SharedDialog from "../../share/Dialog/SharedDialog";
 import ModalOpenBox from "./ModalOpenBox";
 import ModalMovement from "./ModalMovement";
+import { getBoxMovementById } from "../../services/boxMovement";
+import FlowMovement from "./FlowMovement";
 
 const BoxModule = () => {
   // reload
   const [reload, setReload] = useState(false);
-  const [reloadMovement, setReloadMovement] = useState(false)
+  const [reloadMovement, setReloadMovement] = useState(false);
   const [date, setDate] = useState(new Date());
   const [disablePDF, setDisablePDF] = useState(true);
 
@@ -38,16 +40,21 @@ const BoxModule = () => {
 
   const [dataBox, setDataBox] = useState({});
 
+  // box movement
+  const [dataBoxMovement, setDataBoxMovement] = useState([]);
+
   useEffect(() => {
     try {
       let dateFormatted = format(date, "yyyy-MM-dd");
       getBoxByDate(dateFormatted)
         .then(({ data }) => {
           if (data?.status === "success") {
-            setIsOpenStill(data?.data?.status == 1); // disabled the open box if existe one with status 1 in this day
-            setIsOpen(Array.isArray(data?.data) ? true : data?.data?.status == 0);
-            setDisablePDF(
+            setIsOpenStill(data?.data?.status == 1 ?? false); // disabled the open box if existe one with status 1 in this day
+            setIsOpen(
               Array.isArray(data?.data) ? true : data?.data?.status == 0
+            );
+            setDisablePDF(
+              Array.isArray(data?.data) ? true : isNaN(data?.data?.status)
             ); // if not existe the object then disable pdf
             setDataBox(data?.data);
           }
@@ -57,6 +64,25 @@ const BoxModule = () => {
       console.log(e);
     }
   }, [date, reload]);
+
+  useEffect(() => {
+    try {
+      if (dataBox?.id) {
+        getBoxMovementById(dataBox?.id).then(({ data }) => {
+          if (data?.status === "success") {
+            setDataBoxMovement(data?.data);
+          }
+        });
+      } else {
+        setDataBoxMovement({
+          price_total: 0,
+          data: [],
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, [reloadMovement, dataBox?.id]);
 
   const validOpenBox = useMemo(() => {
     return format(date, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
@@ -177,12 +203,27 @@ const BoxModule = () => {
               </Box>
             </Grid>
             <Grid item xs={12}>
-              movimientos
+              <Box>
+                <Box display="flex" justifyContent="center" width="65%">
+                  <Typography>
+                    {parseInt(dataBoxMovement?.price_total).toLocaleString(
+                      "es-CO",
+                      {
+                        style: "currency",
+                        currency: "COP",
+                      }
+                    )}
+                  </Typography>
+                </Box>
+                <Box display="flex" justifyContent="center" width="65%" mt={2}>
+                  <Typography><b>Total del día</b></Typography>
+                </Box>
+              </Box>
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={4}>
-          Flujo de movimientos
+          <FlowMovement data={dataBoxMovement?.data}/>
         </Grid>
       </Grid>
     </Box>

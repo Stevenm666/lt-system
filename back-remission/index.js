@@ -13,6 +13,7 @@ const productsRouter = require('./src/router/products');
 const remissionRouter = require('./src/router/remission');
 const pdfRouter = require('./src/router/pdf');
 const boxRouter = require('./src/router/box');
+const boxMovementRouter = require('./src/router/box_movement');
 
 // import middleware
 const middlewareHeaders = require('./src/middlewares/headers');
@@ -38,6 +39,7 @@ app.use('/products', productsRouter)
 app.use('/remissions', remissionRouter)
 app.use('/pdf', pdfRouter)
 app.use('/box', boxRouter)
+app.use('/box_movement', boxMovementRouter)
 
 // listen
 app.listen(PORT)
