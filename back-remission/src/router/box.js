@@ -31,4 +31,17 @@ boxRouter.post("/open", async (req, res) => {
   }
 });
 
+boxRouter.put("/to-close/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { ending, total_diff, user_finished } = req.body;
+    const date = new Date().toISOString().slice(0, 19).replace("T", " ");
+    const queryUpdated = `UPDATE box SET ending=${ending}, total_diff=${total_diff}, user_finished="${user_finished}", status=0, updated_at="${date}" WHERE id=${id}`;
+    const data = await db.handleQuery(queryUpdated);
+    utils.sucessResponse(res, data, "success");
+  } catch (e) {
+    utils.errorReponse(res, 500, "Error en la conexión a la base de datos");
+  }
+});
+
 module.exports = boxRouter;

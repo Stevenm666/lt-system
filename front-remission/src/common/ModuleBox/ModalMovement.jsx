@@ -37,7 +37,7 @@ const ModalMovement = ({ handleClose, dataBox, setReloadMovement }) => {
       <SharedDialog
         open={outcomes}
         handleClose={() => setOutcomes(false)}
-        title="Ingresos"
+        title="Egresos"
         body={
           <ModalOutcomes
             handleClose={() => setOutcomes(false)}

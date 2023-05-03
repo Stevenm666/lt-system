@@ -11,3 +11,7 @@ export const postIncomes = (body) => {
 export const postOutcomes = (body) => {
   return instance.post("/box_movement/outcomes", body);
 };
+
+export const getBoxMovementClose = (id) => {
+  return instance.get(`/box_movement/close/${id}`);
+};

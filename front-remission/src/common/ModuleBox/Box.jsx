@@ -18,6 +18,7 @@ import ModalOpenBox from "./ModalOpenBox";
 import ModalMovement from "./ModalMovement";
 import { getBoxMovementById } from "../../services/boxMovement";
 import FlowMovement from "./FlowMovement";
+import CloseBox from "./CloseBox";
 
 const BoxModule = () => {
   // reload
@@ -35,6 +36,9 @@ const BoxModule = () => {
 
   // modal box movement
   const [openMovement, setOpenMovement] = useState(false);
+
+  // modal close box
+  const [closeBox, setCloseBox] = useState(false);
 
   // data Box
 
@@ -116,6 +120,19 @@ const BoxModule = () => {
         }
       />
 
+      <SharedDialog
+        open={closeBox}
+        handleClose={() => setCloseBox(false)}
+        title="Cierre de caja"
+        body={
+          <CloseBox
+            handleClose={() => setCloseBox(false)}
+            dataBox={dataBox}
+            setReload={setReload}
+          />
+        }
+      />
+
       {/* MAIN */}
       <Grid container spacing={2}>
         <Grid item xs={10}>
@@ -152,6 +169,7 @@ const BoxModule = () => {
                 style={styles?.boxBorder}
                 variant="outlined"
                 disabled={isOpen || !validOpenBox}
+                onClick={() => setCloseBox(true)}
               >
                 <Box style={styles?.alignItemsBorder}>
                   <Typography style={styles?.textButtonBorder}>
@@ -216,14 +234,16 @@ const BoxModule = () => {
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="center" width="65%" mt={2}>
-                  <Typography><b>Total del día</b></Typography>
+                  <Typography>
+                    <b>Total del día</b>
+                  </Typography>
                 </Box>
               </Box>
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={4}>
-          <FlowMovement data={dataBoxMovement?.data}/>
+          <FlowMovement data={dataBoxMovement?.data} />
         </Grid>
       </Grid>
     </Box>
