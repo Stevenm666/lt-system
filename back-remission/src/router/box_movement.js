@@ -79,4 +79,50 @@ boxMovementRouter.post("/outcomes", async (req, res) => {
   }
 });
 
+boxMovementRouter.get("/close/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const queryMovement = `SELECT * FROM box_movement WHERE id_box = ${id}`;
+    const allMovements = await db.handleQuery(queryMovement);
+    const data = {
+      cash: 0,
+      bancolombia: 0,
+      nequi: 0,
+      daviplata: 0,
+      card: 0,
+      outcomes: 0,
+    };
+
+    for (const element of allMovements) {
+      if (element?.type_income) {
+        switch (element.type_income) {
+          case 1:
+            data["cash"] += element?.price;
+            break;
+          case 2:
+            data["bancolombia"] += element?.price;
+            break;
+          case 3:
+            data["nequi"] += element?.price;
+            break;
+          case 4:
+            data["daviplata"] += element?.price;
+            break;
+          case 5:
+            data["card"] += element?.price;
+            break;
+          default:
+            return;
+            break;
+        }
+      } else {
+        data["outcomes"] += element?.price;
+      }
+    }
+    utils.sucessResponse(res, [data], "success");
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 module.exports = boxMovementRouter;

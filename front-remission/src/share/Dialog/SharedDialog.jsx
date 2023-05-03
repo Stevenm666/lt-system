@@ -28,7 +28,7 @@ const SharedDialog = ({ open, handleClose, title, body }) => {
           </Grid>
         </Grid>
       </DialogTitle>
-      <DialogContent style={{ width: "480px", padding: "20px" }}>{body}</DialogContent>
+      <DialogContent style={{ width: "520px", padding: "20px" }}>{body}</DialogContent>
     </Dialog>
   );
 };

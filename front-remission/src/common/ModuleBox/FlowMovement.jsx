@@ -4,7 +4,6 @@ import React from "react";
 import { Box, Grid, Typography } from "@material-ui/core";
 
 const FlowMovement = ({ data }) => {
-  console.log({ data });
   return (
     <Box>
       <Box mb={2}>
@@ -16,7 +15,7 @@ const FlowMovement = ({ data }) => {
         container
         spacing={2}
         style={{
-          height: "400px",
+          maxHeight: "400px",
           overflowY: "auto",
           width: "100%",
         }}
