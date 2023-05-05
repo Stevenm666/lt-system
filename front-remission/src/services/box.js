@@ -11,3 +11,7 @@ export const postOpenBox = (body) => {
 export const putOpenBoxToClose = (id, body) => {
   return instance.put(`/box/to-close/${id}`, body);
 };
+
+export const putOpenBox = (id, body) => {
+  return instance.put(`/box/${id}`, body);
+}

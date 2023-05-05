@@ -85,8 +85,11 @@ const SecondStepClose = ({
       (acc, val, index) => acc + (val - valuesValues[index]),
       0
     );
+    console.log({sum})
     if (sum === 0) {
       setDisabled(false);
+    }else{
+      setDisabled(true);
     }
   }, [dataSystem, dataValues]);
 

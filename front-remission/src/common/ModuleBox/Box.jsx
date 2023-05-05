@@ -19,6 +19,7 @@ import ModalMovement from "./ModalMovement";
 import { getBoxMovementById } from "../../services/boxMovement";
 import FlowMovement from "./FlowMovement";
 import CloseBox from "./CloseBox";
+import ModalPDF from "./ModalPDF";
 
 const BoxModule = () => {
   // reload
@@ -39,6 +40,9 @@ const BoxModule = () => {
 
   // modal close box
   const [closeBox, setCloseBox] = useState(false);
+
+  // modal pdf
+  const [openPDF, setOpenPDF] = useState(false);
 
   // data Box
 
@@ -103,6 +107,7 @@ const BoxModule = () => {
           <ModalOpenBox
             handleClose={() => setOpenBox(false)}
             setReload={setReload}
+            dataBox={dataBox}
           />
         }
       />
@@ -133,6 +138,18 @@ const BoxModule = () => {
         }
       />
 
+      <SharedDialog
+        open={openPDF}
+        handleClose={() => setOpenPDF(false)}
+        title="Descargar PDF"
+        body={
+          <ModalPDF
+            handleClose={() => setOpenPDF(false)}
+            dataBox={dataBox}
+            setReload={setReload}
+          />
+        }
+      />
       {/* MAIN */}
       <Grid container spacing={2}>
         <Grid item xs={10}>
@@ -144,6 +161,20 @@ const BoxModule = () => {
           <Box>
             <Typography>
               {isOpenStill ? "Caja abierta" : "Caja cerrada"}
+            </Typography>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Box>
+            <Typography>
+              Diferencia de caja:{" "}
+              {dataBox.total_diff
+                ? parseInt(dataBox?.total_diff).toLocaleString("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                  })
+                : "La caja no se ha cerrado aún"}
             </Typography>
           </Box>
         </Grid>
@@ -183,6 +214,7 @@ const BoxModule = () => {
                 style={styles.boxBorder}
                 variant="outlined"
                 disabled={disablePDF}
+                onClick={() => setOpenPDF(true)}
               >
                 <Box style={styles?.alignItemsBorder}>
                   <Typography style={styles?.textButtonBorder}>PDF</Typography>
