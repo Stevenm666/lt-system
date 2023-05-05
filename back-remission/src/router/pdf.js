@@ -189,7 +189,9 @@ const getInfoBoxAndItsMovement = async (startDate, endDate, req) => {
 
             dataMovement["created_at"] = dataMovement["created_at"].replace(/T|\.000Z/g, " ").slice(0, -4)
 
-            console.log({ dataMovement });
+            dataMovement["type_color"] = dataMovement["type_income"] ? "incomes" : "outcomes"
+
+            console.log({dataMovement})
           }
           dataBox["movements"] = dataBoxMovements;
           arrayData.push(dataBox);
@@ -199,7 +201,6 @@ const getInfoBoxAndItsMovement = async (startDate, endDate, req) => {
   }
 
   pdfData["dataBox"] = arrayData;
-  console.log(pdfData);
 
   return pdfData;
 };

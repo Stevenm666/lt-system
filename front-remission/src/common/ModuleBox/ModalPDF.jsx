@@ -65,7 +65,7 @@ const ModalPDF = ({ handleClose, dataBox, setReload }) => {
                   id="date"
                   {...field}
                   onChange={(e) => field.onChange(e.target.value)}
-                  label="Fecha de inicio"
+                  label="Desde"
                   type="date"
                   defaultValue={format(new Date(), "yyyy-MM-dd", {
                     locale: es,
@@ -101,7 +101,7 @@ const ModalPDF = ({ handleClose, dataBox, setReload }) => {
                   id="date"
                   {...field}
                   onChange={(e) => field.onChange(e.target.value)}
-                  label="Fecha fin"
+                  label="Hasta"
                   type="date"
                   defaultValue={format(new Date(), "yyyy-MM-dd", {
                     locale: es,

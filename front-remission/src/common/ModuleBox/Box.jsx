@@ -164,8 +164,20 @@ const BoxModule = () => {
             </Typography>
           </Box>
         </Grid>
-
-        <Grid item xs={12}>
+        <Grid item xs={6}>
+          <Box>
+            <Typography>
+              Valor de la caja abierta:{" "}
+              {dataBox.opening
+                ? parseInt(dataBox?.opening).toLocaleString("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                  })
+                : ""}
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={6}>
           <Box>
             <Typography>
               Diferencia de caja:{" "}
@@ -174,7 +186,7 @@ const BoxModule = () => {
                     style: "currency",
                     currency: "COP",
                   })
-                : "La caja no se ha cerrado aún"}
+                : ""}
             </Typography>
           </Box>
         </Grid>
