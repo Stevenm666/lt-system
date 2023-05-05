@@ -17,11 +17,11 @@ import { useForm, Controller } from "react-hook-form";
 
 // redux
 import { useSelector } from "react-redux";
-import { postOpenBox } from "../../services/box";
+import { postOpenBox, putOpenBox } from "../../services/box";
 import { useSnackbar } from "notistack";
 import { successToast } from "../../utils/misc";
 
-const ModalOpenBox = ({ handleClose, setReload }) => {
+const ModalOpenBox = ({ handleClose, setReload, dataBox }) => {
   // redux user
   const user = useSelector((state) => state.user);
   const { enqueueSnackbar } = useSnackbar();
@@ -38,6 +38,20 @@ const ModalOpenBox = ({ handleClose, setReload }) => {
       values["opening"] = parseInt(values["opening"].replace(/\D/g, ""));
       values["status"] = 1;
       values["user_creator"] = user?.rol;
+
+      if (dataBox?.id) {
+        // edit the box
+        putOpenBox(dataBox?.id, values)
+          .then(({ data }) => {
+            if (data?.status === "success") {
+              setReload((prev) => !prev);
+              enqueueSnackbar("Se ha abierto la caja", successToast);
+              handleClose();
+            }
+          })
+          .catch((e) => console.log(e));
+        return;
+      }
 
       // service
       postOpenBox(values)

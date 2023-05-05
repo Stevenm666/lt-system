@@ -120,7 +120,6 @@ const RemissionById = ({ id }) => {
       setGeneratePdfLoading(true)
       getGeneratePDF(id)
         .then(({ data }) => {
-          console.log(data);
           const file = new Blob([data], { type: "application/pdf" });
           const fileURL = URL.createObjectURL(file);
           window.open(fileURL);

@@ -31,7 +31,29 @@ pdfRouter.get("/remission/:id", async (req, res) => {
     res.attachment(`remission_${id}.pdf`);
     res.end(buffer);
   } catch (e) {
-    console.log(e);
+    utils.errorReponse(res, 500, e);
+  }
+});
+
+pdfRouter.post("/box", async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+    const pdfData = await getInfoBoxAndItsMovement(startDate, endDate, req);
+    const options = {
+      format: "A4",
+    };
+
+    // using template
+    const html = await readFile("src/views/box.hbs", "utf8");
+    const template = hbs.compile(html);
+    const content = template(pdfData);
+    const buffer = await htmlPDF.create(content, options);
+
+    // res attachment
+    res.attachment(`box-${startDate}-${endDate}.pdf`);
+    res.end(buffer);
+  } catch (e) {
+    utils.errorReponse(res, 500, e);
   }
 });
 
@@ -104,4 +126,82 @@ const getInfoRemissionPDF = async (id, req) => {
     }
   }
 };
+
+const getInfoBoxAndItsMovement = async (startDate, endDate, req) => {
+  const pdfData = {
+    baseUrl: `${req.protocol}://${req.get("host")}`, // http://localhost:3001 or the server host
+  };
+
+  const queryGetBoxByDate = `SELECT * FROM box WHERE DATE(created_at) BETWEEN STR_TO_DATE("${startDate}", '%Y-%m-%d') AND STR_TO_DATE("${endDate}", '%Y-%m-%d');`;
+  const dataGetBoxByDate = await db.handleQuery(queryGetBoxByDate);
+
+  let arrayData = [];
+
+  let arrayyMethod = [
+    "Efectivo",
+    "Bancolombia",
+    "Nequi",
+    "Daviplata",
+    "Tarjeta",
+  ];
+
+  let nameMovement = ["Ingreso", "Egreso"];
+
+  if (Array?.isArray(dataGetBoxByDate) && dataGetBoxByDate?.length > 0) {
+    for (const dataBox of dataGetBoxByDate) {
+      if (dataBox?.id) {
+        const queryBoxMovement = `SELECT * FROM box_movement WHERE id_box=${dataBox?.id}`;
+        const dataBoxMovements = await db.handleQuery(queryBoxMovement);
+
+        dataBox["created_at"] = dataBox["created_at"].substring(0, 10); // format timestamp
+
+        // format box opening and ending
+        dataBox["opening"] = dataBox["opening"].toLocaleString("es-CO", {
+          style: "currency",
+          currency: "COP",
+        });
+
+        dataBox["ending"] = dataBox["ending"].toLocaleString("es-CO", {
+          style: "currency",
+          currency: "COP",
+        });
+
+        dataBox["total_diff"] = dataBox["total_diff"].toLocaleString("es-CO", {
+          style: "currency",
+          currency: "COP",
+        });
+
+        if (Array.isArray(dataBoxMovements) && dataBoxMovements?.length > 0) {
+          for (const dataMovement of dataBoxMovements) {
+            dataMovement["price"] = dataMovement["price"].toLocaleString(
+              "es-CO",
+              {
+                style: "currency",
+                currency: "COP",
+              }
+            );
+            if (dataMovement["type_income"]) {
+              dataMovement["type_income"] =
+                arrayyMethod[parseInt(dataMovement["type_income"]) - 1];
+            }
+            dataMovement["type"] =
+              nameMovement[parseInt(dataMovement["type"]) - 1];
+
+            dataMovement["created_at"] = dataMovement["created_at"].replace(/T|\.000Z/g, " ").slice(0, -4)
+
+            console.log({ dataMovement });
+          }
+          dataBox["movements"] = dataBoxMovements;
+          arrayData.push(dataBox);
+        }
+      }
+    }
+  }
+
+  pdfData["dataBox"] = arrayData;
+  console.log(pdfData);
+
+  return pdfData;
+};
+
 module.exports = pdfRouter;
