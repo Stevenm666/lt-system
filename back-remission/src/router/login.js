@@ -19,7 +19,7 @@ loginRouter.post("/", async (req, res) => {
       data?.length ? "success" : "no existe el usuario"
     );
   } catch (e) {
-    utils.errorReponse(res, 500, "Error en la conexión a la base de datos");
+    utils.errorReponse(res, 500, e);
   }
 });
 
