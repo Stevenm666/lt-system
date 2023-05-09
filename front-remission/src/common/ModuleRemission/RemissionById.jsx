@@ -34,8 +34,8 @@ const RemissionById = ({ id }) => {
   const [cancelOpen, setCancelOpen] = useState(false);
 
   const [user, setUser] = useState({});
-  console.log({remission})
-  const [generatePdfLoading, setGeneratePdfLoading] = useState(false)
+  console.log({ remission });
+  const [generatePdfLoading, setGeneratePdfLoading] = useState(false);
 
   const ISCANCEL = remission?.status == 3;
 
@@ -117,14 +117,14 @@ const RemissionById = ({ id }) => {
   // handleGeneratePDF
   const handleGeneratePDF = (id) => {
     try {
-      setGeneratePdfLoading(true)
+      setGeneratePdfLoading(true);
       getGeneratePDF(id)
         .then(({ data }) => {
           const file = new Blob([data], { type: "application/pdf" });
           const fileURL = URL.createObjectURL(file);
           window.open(fileURL);
           saveAs(file, `remission_${id}.pdf`); // save the file
-          setGeneratePdfLoading(false)
+          setGeneratePdfLoading(false);
         })
         .catch((e) => console.log(e));
     } catch (e) {
@@ -218,7 +218,11 @@ const RemissionById = ({ id }) => {
         </Grid>
         <Grid item xs={2}>
           <Box>
-            <Button variant="outlined" onClick={() => setOpen(true)}>
+            <Button
+              variant="outlined"
+              onClick={() => setOpen(true)}
+              disabled={remission?.status != 2}
+            >
               Editar
             </Button>
           </Box>

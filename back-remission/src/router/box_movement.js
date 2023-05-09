@@ -53,6 +53,16 @@ boxMovementRouter.post("/incomes", async (req, res) => {
     const queryCreate = `INSERT INTO box_movement (consecutive, type, id_box, observations, created_at, user_creator, updated_at, user_update, status, price, type_income) VALUES ("${consecutive}-${numberID}",  ${type},  ${id_box}, "${observation}", "${date}", "${user_creator}", "${date}", "${user_updated}", ${status}, ${price}, ${type_income} )`;
     const data = await db.handleQuery(queryCreate);
 
+    // update price
+    const querySelectBox = `SELECT opening FROM box WHERE id = ${id_box}`;
+    const dataBox = await db.handleQuery(querySelectBox);
+
+    const queryUpdateOpening = `UPDATE box SET opening =${
+      dataBox[0]?.opening + price
+    } where id = ${id_box}`;
+
+    await db.handleQuery(queryUpdateOpening);
+
     utils.sucessResponse(res, data, "success");
   } catch (e) {
     utils.errorReponse(res, 500, e);
@@ -73,6 +83,17 @@ boxMovementRouter.post("/outcomes", async (req, res) => {
     const date = new Date().toISOString().slice(0, 19).replace("T", " ");
     const queryCreate = `INSERT INTO box_movement (consecutive, type, id_box, observations, created_at, user_creator, updated_at, user_update, status, price, type_income) VALUES (NULL,  ${type},  ${id_box}, "${observation}", "${date}", "${user_creator}", "${date}", "${user_updated}", ${status}, ${price}, NULL)`;
     const data = await db.handleQuery(queryCreate);
+
+    // update price box
+    const querySelectBox = `SELECT opening FROM box WHERE id = ${id_box}`;
+    const dataBox = await db.handleQuery(querySelectBox);
+
+    const queryUpdateOpening = `UPDATE box SET opening =${
+      dataBox[0]?.opening - price
+    } where id = ${id_box}`;
+
+    await db.handleQuery(queryUpdateOpening);
+
     utils.sucessResponse(res, data, "success");
   } catch (e) {
     utils.errorReponse(res, 500, e);

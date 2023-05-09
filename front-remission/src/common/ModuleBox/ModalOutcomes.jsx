@@ -24,6 +24,7 @@ const ModalOutcomes = ({
   handleCloseAll,
   dataBox,
   setReloadMovement,
+  setReload
 }) => {
   const user = useSelector((state) => state.user);
 
@@ -46,6 +47,7 @@ const ModalOutcomes = ({
         .then(({ data }) => {
           if (data?.status === "success") {
             setReloadMovement((prev) => !prev);
+            setReload((prev) => !prev);
             handleCloseAll();
             enqueueSnackbar("Se ha generado el egreso", successToast);
           }
