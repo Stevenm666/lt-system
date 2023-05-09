@@ -121,6 +121,7 @@ const BoxModule = () => {
             handleClose={() => setOpenMovement(false)}
             dataBox={dataBox}
             setReloadMovement={setReloadMovement}
+            setReload={setReload}
           />
         }
       />

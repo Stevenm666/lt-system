@@ -24,7 +24,7 @@ import { postIncomes } from "../../services/boxMovement";
 import { useSnackbar } from "notistack";
 import { successToast } from "../../utils/misc";
 
-const ModalIncomes = ({ handleClose, handleCloseAll, dataBox, setReloadMovement }) => {
+const ModalIncomes = ({ handleClose, handleCloseAll, dataBox, setReloadMovement, setReload }) => {
   const user = useSelector((state) => state.user);
   const { enqueueSnackbar } = useSnackbar()
 
@@ -49,6 +49,7 @@ const ModalIncomes = ({ handleClose, handleCloseAll, dataBox, setReloadMovement 
             console.log({ data });
             handleCloseAll()
             setReloadMovement(prev => !prev)
+            setReload(prev => !prev)
             enqueueSnackbar("Se ha generado el ingreso", successToast)
           }
         })

@@ -8,7 +8,7 @@ import SharedDialog from "../../share/Dialog/SharedDialog";
 import ModalIncomes from "./ModalIncomes";
 import ModalOutcomes from "./ModalOutcomes";
 
-const ModalMovement = ({ handleClose, dataBox, setReloadMovement }) => {
+const ModalMovement = ({ handleClose, dataBox, setReloadMovement, setReload }) => {
 
   const [incomes, setIncomes] = useState(false);
   const [outcomes, setOutcomes] = useState(false);
@@ -29,6 +29,7 @@ const ModalMovement = ({ handleClose, dataBox, setReloadMovement }) => {
             }}
             setReloadMovement={setReloadMovement}
             dataBox={dataBox}
+            setReload={setReload}
           />
         }
       />
@@ -47,6 +48,7 @@ const ModalMovement = ({ handleClose, dataBox, setReloadMovement }) => {
             }}
             setReloadMovement={setReloadMovement}
             dataBox={dataBox}
+            setReload={setReload}
           />
         }
       />

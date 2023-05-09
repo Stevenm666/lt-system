@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 
 import { Controller } from "react-hook-form";
 import { Autocomplete } from "@material-ui/lab";
@@ -9,6 +9,10 @@ import {
   FormHelperText,
   Button,
 } from "@material-ui/core";
+
+// icons
+import { AiOutlinePlus } from "react-icons/ai";
+import { RiSubtractFill } from "react-icons/ri";
 
 const ChooseProducts = ({
   control,
@@ -22,6 +26,17 @@ const ChooseProducts = ({
 }) => {
   return (
     <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Box style={{ cursor: "pointer" }}>
+            <RiSubtractFill />
+          </Box>
+          <Box>Cantidad</Box>
+          <Box style={{ cursor: "pointer" }}>
+            <AiOutlinePlus />
+          </Box>
+        </Box>
+      </Grid>
       {/* products */}
       <Grid item xs={12}>
         <Controller
