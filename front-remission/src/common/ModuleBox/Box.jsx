@@ -179,7 +179,7 @@ const BoxModule = () => {
           </Box>
         </Grid>
         <Grid item xs={6}>
-          <Box>
+          {/* <Box>
             <Typography>
               Diferencia de caja:{" "}
               {dataBox.total_diff
@@ -189,7 +189,7 @@ const BoxModule = () => {
                   })
                 : ""}
             </Typography>
-          </Box>
+          </Box> */}
         </Grid>
 
         <Grid item xs={4}>
