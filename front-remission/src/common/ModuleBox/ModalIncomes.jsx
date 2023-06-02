@@ -22,11 +22,17 @@ import { useSelector } from "react-redux";
 import { NumericFormat } from "react-number-format";
 import { postIncomes } from "../../services/boxMovement";
 import { useSnackbar } from "notistack";
-import { successToast } from "../../utils/misc";
+import { successToast, errorToast } from "../../utils/misc";
 
-const ModalIncomes = ({ handleClose, handleCloseAll, dataBox, setReloadMovement, setReload }) => {
+const ModalIncomes = ({
+  handleClose,
+  handleCloseAll,
+  dataBox,
+  setReloadMovement,
+  setReload,
+}) => {
   const user = useSelector((state) => state.user);
-  const { enqueueSnackbar } = useSnackbar()
+  const { enqueueSnackbar } = useSnackbar();
 
   const {
     handleSubmit,
@@ -42,15 +48,19 @@ const ModalIncomes = ({ handleClose, handleCloseAll, dataBox, setReloadMovement,
       values["type"] = 1;
       values["price"] = parseInt(values["price"].replace(/\D/g, ""));
       values["status"] = 1;
+      values["consecutive"] = `${values["consecutive"]}-${values["number_consecutive"]}`
 
       postIncomes(values)
         .then(({ data }) => {
+          console.log(data)
           if (data?.status === "success") {
             console.log({ data });
-            handleCloseAll()
-            setReloadMovement(prev => !prev)
-            setReload(prev => !prev)
-            enqueueSnackbar("Se ha generado el ingreso", successToast)
+            handleCloseAll();
+            setReloadMovement((prev) => !prev);
+            setReload((prev) => !prev);
+            enqueueSnackbar("Se ha generado el ingreso", successToast);
+          }else {
+            enqueueSnackbar(data?.message, errorToast);
           }
         })
         .catch((e) => console.log(e));
@@ -65,7 +75,7 @@ const ModalIncomes = ({ handleClose, handleCloseAll, dataBox, setReloadMovement,
     <Box>
       <form onSubmit={handleSubmit(onSubmit, onError)}>
         <Grid container spacing={2}>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <Controller
               rules={{
                 required: {
@@ -98,6 +108,24 @@ const ModalIncomes = ({ handleClose, handleCloseAll, dataBox, setReloadMovement,
                 {errors?.consecutive?.message}
               </FormHelperText>
             )}
+          </Grid>
+          <Grid item xs={2}>
+            <Controller
+              name="number_consecutive"
+              control={control}
+              defaultValue={""}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  variant="outlined"
+                  label="#"
+                  type="number"
+                  size="small"
+                  fullWidth
+                  onChange={(e) => field.onChange(e.target.value)}
+                />
+              )}
+            />
           </Grid>
           <Grid item xs={6}>
             <Controller
