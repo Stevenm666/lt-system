@@ -30,20 +30,28 @@ const ItemRemission = ({ remission }) => {
   return (
     <Box mt={2} style={styles?.container}>
       <Grid container>
-        <Grid item xs={3}>
+        <Grid item xs={2}>
           <Typography>{remission?.identy_user}</Typography>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={2}>
           <Typography>
             {statusArray[parseInt(remission?.status) - 1]}{" "}
             <span>{isPending ? "+ 5 días" : ""}</span>
           </Typography>
         </Grid>
         <Grid item xs={2}>
-          <Typography>{remission?.user_creator}</Typography>
+          {parseInt(remission?.total).toLocaleString("es-CO", {
+            style: "currency",
+            currency: "COP",
+          })}
         </Grid>
         <Grid item xs={2}>
-          <Typography style={{fontSize: "14px"}}>
+          <Box ml={3}>
+            <Typography>{remission?.user_creator}</Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={2}>
+          <Typography style={{ fontSize: "14px" }}>
             {new Date(remission?.created_at).toLocaleString()}
           </Typography>
         </Grid>

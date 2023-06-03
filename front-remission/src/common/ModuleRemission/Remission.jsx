@@ -1,7 +1,17 @@
 import { useState, useEffect } from "react";
 
 // MUI
-import { Box, Button, Grid, Typography, TextField, FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Grid,
+  Typography,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@material-ui/core";
 
 // styles
 import { styles } from "../../styles/remission.style";
@@ -39,7 +49,7 @@ const Remission = () => {
   const useDebounceFilter = useDebounceHook(filter);
 
   const [pages, setPages] = useState(1);
-  const [status, setStatus] = useState("1, 2, 3")
+  const [status, setStatus] = useState("1, 2, 3");
 
   useEffect(() => {
     try {
@@ -116,14 +126,19 @@ const Remission = () => {
       </Grid>
       <Box mt={3}>
         <Grid container>
-          <Grid item xs={3}>
+          <Grid item xs={2}>
             <Box>
               <Typography style={styles?.textHeader}>Identificación</Typography>
             </Box>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={2}>
             <Box>
               <Typography style={styles?.textHeader}>Estado</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={2}>
+            <Box>
+              <Typography style={styles?.textHeader}>Total</Typography>
             </Box>
           </Grid>
           <Grid item xs={2}>
