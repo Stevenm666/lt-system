@@ -27,6 +27,14 @@ const RemissionById = ({ id }) => {
   const [reload, setReload] = useState(false);
   const [pdf, setPdf] = useState(null);
 
+  const totalRemissionPrice = useMemo(() => {
+    return products.reduce((total, product) => {
+      return total + product.price;
+    }, 0);
+  }, [products]);
+
+  console.log(totalRemissionPrice);
+
   const { enqueueSnackbar } = useSnackbar();
 
   // modal
@@ -34,7 +42,7 @@ const RemissionById = ({ id }) => {
   const [cancelOpen, setCancelOpen] = useState(false);
 
   const [user, setUser] = useState({});
-  console.log({ remission });
+  console.log({ remission, products });
   const [generatePdfLoading, setGeneratePdfLoading] = useState(false);
 
   const ISCANCEL = remission?.status == 3;
@@ -227,6 +235,16 @@ const RemissionById = ({ id }) => {
             </Button>
           </Box>
         </Grid>
+        <Grid item xs={6}>
+          <Box mt={2}>{`Valor total: ${
+            totalRemissionPrice
+              ? parseInt(totalRemissionPrice).toLocaleString("es-CO", {
+                  style: "currency",
+                  currency: "COP",
+                })
+              : "loading"
+          }`}</Box>
+        </Grid>
       </Grid>
 
       {/* products */}
@@ -243,6 +261,13 @@ const RemissionById = ({ id }) => {
             <Grid item xs={6} key={i} style={{ marginTop: "15px" }}>
               <Box>
                 <Typography>{`${product?.name} - ${product?.code}`}</Typography>
+                <Typography>{`precio: ${parseInt(product?.price).toLocaleString(
+                  "es-CO",
+                  {
+                    style: "currency",
+                    currency: "COP",
+                  }
+                )}`}</Typography>
               </Box>
             </Grid>
           ))}
