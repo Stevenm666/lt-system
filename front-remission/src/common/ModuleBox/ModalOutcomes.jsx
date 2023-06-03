@@ -1,4 +1,4 @@
-import React from "react";
+import {useState} from "react";
 // MUI
 import {
   Box,
@@ -27,6 +27,7 @@ const ModalOutcomes = ({
   setReload
 }) => {
   const user = useSelector((state) => state.user);
+  const [disableButton, setDisableButton] = useState(false);
 
   const {
     handleSubmit,
@@ -36,6 +37,7 @@ const ModalOutcomes = ({
 
   const onSubmit = (values) => {
     try {
+      setDisableButton(true)
       values["id_box"] = dataBox.id;
       values["price"] = parseInt(values["price"].replace(/\D/g, ""));
       values["type"] = 2;
@@ -50,6 +52,7 @@ const ModalOutcomes = ({
             setReload((prev) => !prev);
             handleCloseAll();
             enqueueSnackbar("Se ha generado el egreso", successToast);
+            setDisableButton(false)
           }
         })
         .catch((e) => console.log(e));
@@ -116,7 +119,7 @@ const ModalOutcomes = ({
             </Button>
           </Grid>
           <Grid item xs={6}>
-            <Button variant="outlined" type="submit">
+            <Button variant="outlined" type="submit" disabled={disableButton}>
               Guardar
             </Button>
           </Grid>

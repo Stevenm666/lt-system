@@ -49,6 +49,7 @@ const Login = () => {
           enqueueSnackbar(data?.message, errorToast)
           return;
         }
+
         dispatch(
           loggedIn({
             username: data?.data?.username,
