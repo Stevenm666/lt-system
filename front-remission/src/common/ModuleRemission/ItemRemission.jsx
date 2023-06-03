@@ -43,7 +43,7 @@ const ItemRemission = ({ remission }) => {
           <Typography>{remission?.user_creator}</Typography>
         </Grid>
         <Grid item xs={2}>
-          <Typography>
+          <Typography style={{fontSize: "14px"}}>
             {new Date(remission?.created_at).toLocaleString()}
           </Typography>
         </Grid>

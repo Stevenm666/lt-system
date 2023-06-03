@@ -1,4 +1,4 @@
-import React from "react";
+import {useState} from "react";
 
 // MUI
 import {
@@ -34,6 +34,8 @@ const ModalIncomes = ({
   const user = useSelector((state) => state.user);
   const { enqueueSnackbar } = useSnackbar();
 
+  const [disableBUtton, setDisableButton] = useState(false)
+
   const {
     handleSubmit,
     control,
@@ -50,11 +52,10 @@ const ModalIncomes = ({
       values["status"] = 1;
       values["consecutive"] = `${values["consecutive"]}-${values["number_consecutive"]}`
 
+      setDisableButton(true)
       postIncomes(values)
         .then(({ data }) => {
-          console.log(data)
           if (data?.status === "success") {
-            console.log({ data });
             handleCloseAll();
             setReloadMovement((prev) => !prev);
             setReload((prev) => !prev);
@@ -62,6 +63,7 @@ const ModalIncomes = ({
           }else {
             enqueueSnackbar(data?.message, errorToast);
           }
+          setDisableButton(false)
         })
         .catch((e) => console.log(e));
     } catch (e) {
@@ -215,7 +217,7 @@ const ModalIncomes = ({
             </Button>
           </Grid>
           <Grid item xs={6}>
-            <Button variant="outlined" type="submit">
+            <Button variant="outlined" type="submit" disabled={disableBUtton}>
               Guardar
             </Button>
           </Grid>
