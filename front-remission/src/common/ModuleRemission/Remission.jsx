@@ -126,7 +126,7 @@ const Remission = () => {
       </Grid>
       <Box mt={3}>
         <Grid container>
-          <Grid item xs={2}>
+          <Grid item xs={6}>
             <Box>
               <Typography style={styles?.textHeader}>Identificación</Typography>
             </Box>
@@ -142,12 +142,7 @@ const Remission = () => {
             </Box>
           </Grid>
           <Grid item xs={2}>
-            <Box>
-              <Typography style={styles?.textHeader}>Creador</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={3}>
-            <Box>
+            <Box style={{marginLeft: "-40px"}}>
               <Typography style={styles?.textHeader}>F. de creación</Typography>
             </Box>
           </Grid>
