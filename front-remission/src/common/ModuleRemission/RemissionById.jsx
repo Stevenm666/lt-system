@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Box, Button, Grid, Typography } from "@material-ui/core";
 import { getRemissionById } from "../../services/remission";
 
@@ -28,12 +28,14 @@ const RemissionById = ({ id }) => {
   const [pdf, setPdf] = useState(null);
 
   const totalRemissionPrice = useMemo(() => {
-    return products.reduce((total, product) => {
-      return total + product.price;
-    }, 0);
-  }, [products]);
+    let arrAccumulate = [];
 
-  console.log(totalRemissionPrice);
+    remission?.products?.forEach((el) => {
+      arrAccumulate.push(el?.price * el?.amount);
+    });
+
+    return arrAccumulate.reduce((acc, curr) => acc + curr, 0);
+  }, [remission]);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -42,20 +44,26 @@ const RemissionById = ({ id }) => {
   const [cancelOpen, setCancelOpen] = useState(false);
 
   const [user, setUser] = useState({});
-  console.log({ remission, products });
   const [generatePdfLoading, setGeneratePdfLoading] = useState(false);
 
   const ISCANCEL = remission?.status == 3;
 
   // CONST
-  const STATUSREMISSION = ["completado", "pendiente", "cancelado"];
+  const STATUSREMISSION = ["Pago", "Pendiente", "Cancelado"];
   const PAYMENTMETHOD = [
-    "efectivo",
+    "Efectivo",
     "Bancolombia",
     "Nequi",
     "Daviplata",
     "Tarjeta",
   ];
+
+  let date = new Date(remission?.created_at);
+  const getYear = date.toLocaleString("default", { year: "numeric" });
+  const getMonth = date.toLocaleString("default", { month: "2-digit" });
+  const getDay = date.toLocaleString("default", { day: "2-digit" });
+
+  const dateFormat = getYear + "-" + getMonth + "-" + getDay;
 
   // useEffects
   useEffect(() => {
@@ -93,8 +101,9 @@ const RemissionById = ({ id }) => {
     // get name of products
     try {
       setLoadingByCode(true);
-      if (remission?.code_product) {
-        getProductByCode({ codes: remission?.code_product })
+      if (remission?.products) {
+        let arr = remission?.products.map((el) => el?.product_code);
+        getProductByCode({ codes: arr.join(",") })
           .then(({ data }) => {
             if (data?.status === "success") {
               if (Array.isArray(data?.data)) {
@@ -117,9 +126,10 @@ const RemissionById = ({ id }) => {
 
   // defaultValue let
   const defaultValue = {
-    defaultProducts: remission?.code_product ? products : [],
+    defaultProducts: remission?.products ? remission?.products : [],
     defaultPaymentMethod: remission?.payment_method,
-    defaultObservation: remission?.observation,
+    defaultObservation:
+      remission?.observation != "null" ? remission?.observation : "",
   };
 
   // handleGeneratePDF
@@ -153,7 +163,9 @@ const RemissionById = ({ id }) => {
             id={id}
             setReload={setReload}
             handleClose={() => setOpen(false)}
-            defaultProducts={products}
+            defaultProducts={products.map((el) => {
+              return { product: el };
+            })}
           />
         }
       />
@@ -245,31 +257,54 @@ const RemissionById = ({ id }) => {
               : "loading"
           }`}</Box>
         </Grid>
+        <Grid item xs={6}>
+          <Box mt={2}>
+            <Typography>{`Fecha: ${dateFormat}`}</Typography>
+          </Box>
+        </Grid>
       </Grid>
 
       {/* products */}
       <Box style={{ marginTop: "40px", height: "280px", overflowY: "auto" }}>
         <Grid container>
-          <Grid item xs={12}>
-            <Box mb={1}>
-              <Typography>
-                <b>Productos</b>
-              </Typography>
-            </Box>
+          <Grid item xs={7}>
+            <Typography>
+              <b>Nombre</b>
+            </Typography>
           </Grid>
-          {products?.map((product, i) => (
-            <Grid item xs={6} key={i} style={{ marginTop: "15px" }}>
-              <Box>
-                <Typography>{`${product?.name} - ${product?.code}`}</Typography>
-                <Typography>{`precio: ${parseInt(product?.price).toLocaleString(
+          <Grid item xs={2}>
+            <Typography>
+              <b>Cantidad</b>
+            </Typography>
+          </Grid>
+          <Grid item xs={3}>
+            <Typography>
+              <b>Precio</b>
+            </Typography>
+          </Grid>
+
+          {remission?.products?.map((product, i) => (
+            <React.Fragment key={i}>
+              <Grid item xs={7} style={{ marginTop: "15px" }}>
+                <Box>
+                  <Typography>{`${product?.name} - ${product?.code}`}</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={2} style={{ marginTop: "15px" }}>
+                <Box>
+                  <Typography>{product?.amount}</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={3} style={{ marginTop: "15px" }}>
+                <Typography>{`${parseInt(product?.price).toLocaleString(
                   "es-CO",
                   {
                     style: "currency",
                     currency: "COP",
                   }
                 )}`}</Typography>
-              </Box>
-            </Grid>
+              </Grid>
+            </React.Fragment>
           ))}
         </Grid>
       </Box>

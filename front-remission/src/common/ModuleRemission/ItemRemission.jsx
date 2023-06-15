@@ -16,7 +16,6 @@ import { useNavigate } from "react-router-dom";
 import { addDays, addHours } from "date-fns";
 
 const ItemRemission = ({ remission }) => {
-  console.log(remission);
   const statusArray = ["Pago", "Pendiente", "Cancelado"]; // remission.status - 1
   const navigate = useNavigate();
 

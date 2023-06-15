@@ -154,7 +154,7 @@ const Remission = () => {
             </Box>
           ) : !listRemission?.length ? (
             <Box display="flex" justifyContent="center" mt={8}>
-              No hay usuarios
+              No hay remisiones
             </Box>
           ) : (
             listRemission?.map((remission, i) => (

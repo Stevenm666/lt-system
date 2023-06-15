@@ -46,6 +46,7 @@ const ModalPutRemission = ({
   const [openModal, setOpenModal] = useState(false);
   const [productSelected, setProductSelected] = useState(defaultProducts ?? []);
 
+
   // form states
   const {
     control,
@@ -72,10 +73,7 @@ const ModalPutRemission = ({
   const onSubmit = (values) => {
     try {
       values["products"] = productSelected
-        ? productSelected?.map((el) => el?.code).join(",")
-        : "";
       values["user_updated"] = user?.rol;
-      console.log({values, productSelected})
       const valid = validateProducts(productSelected); // validate rules products for remission
       if (valid == -1) {
         return;
@@ -112,7 +110,6 @@ const ModalPutRemission = ({
     }
   }, []);
 
-  //console.log({ allProducts, defaultValues, id });
   return (
     <Box>
       <SharedDialog
@@ -129,6 +126,7 @@ const ModalPutRemission = ({
             setProductSelected={setProductSelected}
             productsSelected={productSelected}
             isEdit={true}
+            defaultValues={defaultValues}
           />
         }
       />
