@@ -81,16 +81,12 @@ const SecondStepClose = ({
   useEffect(() => {
     const systemValues = Object.values(dataSystem);
     const valuesValues = Object.values(dataValues);
-    const sum = systemValues.reduce(
-      (acc, val, index) => acc + (val - valuesValues[index]),
-      0
+
+    const validated = systemValues.every(
+      (el, idx) => el - valuesValues[idx] === 0
     );
-    console.log({sum})
-    if (sum === 0) {
-      setDisabled(false);
-    }else{
-      setDisabled(true);
-    }
+
+    setDisabled(!validated);
   }, [dataSystem, dataValues]);
 
   return (

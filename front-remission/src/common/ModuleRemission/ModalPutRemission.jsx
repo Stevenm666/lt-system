@@ -79,7 +79,6 @@ const ModalPutRemission = ({
         return;
       }
       // change status to completed - 1
-      console.log({ values });
       putRemissionById(parseInt(id), values)
         .then(({ data }) => {
           if (data?.status === "success") {

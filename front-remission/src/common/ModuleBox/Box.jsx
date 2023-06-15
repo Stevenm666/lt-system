@@ -61,9 +61,8 @@ const BoxModule = () => {
             setIsOpen(
               Array.isArray(data?.data) ? true : data?.data?.status == 0
             );
-            setDisablePDF(
-              Array.isArray(data?.data) ? true : isNaN(data?.data?.status)
-            ); // if not existe the object then disable pdf
+            setDisablePDF(Boolean(!data?.data?.ending))
+            ; // if not existe the object then disable pdf
             setDataBox(data?.data);
           }
         })
@@ -226,7 +225,7 @@ const BoxModule = () => {
               <Button
                 style={styles.boxBorder}
                 variant="outlined"
-                disabled={disablePDF}
+                disabled={disablePDF }
                 onClick={() => setOpenPDF(true)}
               >
                 <Box style={styles?.alignItemsBorder}>

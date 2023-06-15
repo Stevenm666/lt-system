@@ -15,12 +15,11 @@ const ChooseProducts = ({
   setProductSelected,
   productsSelected,
   isEdit = false,
-  defaultValues
+  defaultValues,
 }) => {
   const [productList, setProductList] = useState(
     productsSelected?.length ? productsSelected?.length : 1
   );
-
 
   const handleAddProduct = () => {
     if (productList > 9) {
@@ -43,17 +42,19 @@ const ChooseProducts = ({
   const validatedValues = () => {
     if (Boolean(productsSelected?.length)) {
       handleClose();
-      productsSelected?.forEach((element) => {
+      productsSelected?.forEach((element, i) => {
         if (!element.hasOwnProperty("amount")) {
           element.amount = defaultValues?.defaultProducts[i]?.amount ?? 1; // default amount
         }
         if (!element.hasOwnProperty("price")) {
-          element.price = element?.product?.price; // taken the default price of the product
+          element.price =
+            defaultValues?.defaultProducts[i]?.price ?? element?.product?.price; // taken the default price of the product
         } else {
           element.price = parseInt(element.price.replace(/\D/g, "")); // format the price
         }
       });
     }
+
     handleClose();
   };
 
@@ -105,7 +106,11 @@ const ChooseProducts = ({
               type="number"
               size="small"
               variant="outlined"
-              defaultValue={productsSelected[i]?.amount ?? defaultValues?.defaultProducts[i]?.amount ?? 1}
+              defaultValue={
+                productsSelected[i]?.amount ??
+                defaultValues?.defaultProducts[i]?.amount ??
+                1
+              }
               onChange={(e) => {
                 let newArray = [...productsSelected];
                 newArray[i]["amount"] = parseInt(e.target.value);
@@ -125,7 +130,11 @@ const ChooseProducts = ({
               size="small"
               variant="outlined"
               label="Precio unitario"
-              defaultValue={productsSelected[i]?.price ?? defaultValues?.defaultProducts[i]?.price ?? null}
+              defaultValue={
+                productsSelected[i]?.price ??
+                defaultValues?.defaultProducts[i]?.price ??
+                null
+              }
               onChange={(e) => {
                 let newArray = [...productsSelected];
                 newArray[i]["price"] = e.target.value;
