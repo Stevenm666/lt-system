@@ -71,11 +71,17 @@ const FormRemission = ({ setReload, handleClose }) => {
   const [productSelected, setProductSelected] = useState([]);
 
   const validateProducts = (products) => {
+    const amountOfProducts = products?.reduce((ant, acc) => ant + acc.amount, 0);
     if (!products?.length) {
       enqueueSnackbar("Se necesita al menos un producto", errorToast);
       return -1;
     }
     if (products && products?.length > 10) {
+      enqueueSnackbar("Maximo 10 productos", errorToast);
+      return -1;
+    }
+
+    if (amountOfProducts >= 10) {
       enqueueSnackbar("Maximo 10 productos", errorToast);
       return -1;
     }
@@ -86,9 +92,7 @@ const FormRemission = ({ setReload, handleClose }) => {
       values["is_new"] = !userFound;
       values["rol"] = user?.rol;
       values["payment_method"] = null;
-      values["products"] = productSelected
-        ? productSelected?.map((el) => el?.code).join(",")
-        : "";
+      values["products"] = productSelected;
       const valid = validateProducts(productSelected); // validate rules products for remission
       if (valid == -1) {
         return;
