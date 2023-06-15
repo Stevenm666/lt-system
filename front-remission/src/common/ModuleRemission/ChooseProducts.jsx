@@ -45,7 +45,7 @@ const ChooseProducts = ({
       handleClose();
       productsSelected?.forEach((element) => {
         if (!element.hasOwnProperty("amount")) {
-          element.amount = 1; // default amount
+          element.amount = defaultValues?.defaultProducts[i]?.amount ?? 1; // default amount
         }
         if (!element.hasOwnProperty("price")) {
           element.price = element?.product?.price; // taken the default price of the product
@@ -125,7 +125,7 @@ const ChooseProducts = ({
               size="small"
               variant="outlined"
               label="Precio unitario"
-              defaultValue={productsSelected[i]?.amount ?? defaultValues?.defaultProducts[i]?.price ?? null}
+              defaultValue={productsSelected[i]?.price ?? defaultValues?.defaultProducts[i]?.price ?? null}
               onChange={(e) => {
                 let newArray = [...productsSelected];
                 newArray[i]["price"] = e.target.value;
