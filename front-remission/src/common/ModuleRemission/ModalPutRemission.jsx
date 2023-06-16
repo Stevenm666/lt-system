@@ -46,7 +46,6 @@ const ModalPutRemission = ({
   const [openModal, setOpenModal] = useState(false);
   const [productSelected, setProductSelected] = useState(defaultProducts ?? []);
 
-
   // form states
   const {
     control,
@@ -70,14 +69,34 @@ const ModalPutRemission = ({
     }
   };
 
+  const validatedValues = () => {
+    if (Boolean(productSelected?.length)) {
+      productSelected?.forEach((element, i) => {
+        if (!element.hasOwnProperty("amount")) {
+          element.amount = defaultValues?.defaultProducts[i]?.amount ?? 1; // default amount
+        }
+        if (!element.hasOwnProperty("price")) {
+          element.price =
+            defaultValues?.defaultProducts[i]?.price ?? element?.product?.price; // taken the default price of the product
+        } else {
+          element.price = parseInt(element.price.replace(/\D/g, "")); // format the price
+        }
+      });
+    }
+  };
+
   const onSubmit = (values) => {
     try {
-      values["products"] = productSelected
+      if (defaultValues) {
+        validatedValues();
+      }
+      values["products"] = productSelected;
       values["user_updated"] = user?.rol;
       const valid = validateProducts(productSelected); // validate rules products for remission
       if (valid == -1) {
         return;
       }
+
       // change status to completed - 1
       putRemissionById(parseInt(id), values)
         .then(({ data }) => {

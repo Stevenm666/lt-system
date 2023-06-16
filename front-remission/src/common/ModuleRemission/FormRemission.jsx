@@ -63,6 +63,9 @@ const FormRemission = ({ setReload, handleClose }) => {
   // userFound
   const [userFound, setUserFound] = useState(false);
 
+  // disabledSubmit
+  const [disabledSubmit, setDisabledSubmit] = useState(false);
+
   // get products
   const [products, setProducts] = useState([]);
 
@@ -71,7 +74,10 @@ const FormRemission = ({ setReload, handleClose }) => {
   const [productSelected, setProductSelected] = useState([]);
 
   const validateProducts = (products) => {
-    const amountOfProducts = products?.reduce((ant, acc) => ant + acc.amount, 0);
+    const amountOfProducts = products?.reduce(
+      (ant, acc) => ant + acc.amount,
+      0
+    );
     if (!products?.length) {
       enqueueSnackbar("Se necesita al menos un producto", errorToast);
       return -1;
@@ -99,12 +105,14 @@ const FormRemission = ({ setReload, handleClose }) => {
       }
       postRemission(values)
         .then(({ data }) => {
+          setDisabledSubmit(true);
           if (data?.status === "success") {
             setReload((prev) => !prev);
             enqueueSnackbar("Se ha creado exitosamente", successToast);
             handleClose();
           }
         })
+        .finally(() => setDisabledSubmit(false))
         .catch((e) => console.log(e));
     } catch (e) {
       console.log(e);
@@ -416,7 +424,7 @@ const FormRemission = ({ setReload, handleClose }) => {
             </Button>
           </Grid>
           <Grid item xs={6}>
-            <Button type="submit">
+            <Button type="submit" disabled={disabledSubmit}>
               <Typography>Guardar</Typography>
             </Button>
           </Grid>
