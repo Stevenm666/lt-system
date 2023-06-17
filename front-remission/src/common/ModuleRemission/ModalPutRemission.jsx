@@ -45,6 +45,7 @@ const ModalPutRemission = ({
   // choose products - modal
   const [openModal, setOpenModal] = useState(false);
   const [productSelected, setProductSelected] = useState(defaultProducts ?? []);
+  const [disabled, setDisabled] = useState(false);
 
   // form states
   const {
@@ -90,6 +91,7 @@ const ModalPutRemission = ({
 
   const onSubmit = (values) => {
     try {
+      setDisabled(true);
       if (defaultValues) {
         validatedValues();
       }
@@ -109,6 +111,7 @@ const ModalPutRemission = ({
             enqueueSnackbar("Se ha editado correctamente", successToast);
           }
         })
+        .finally(() => setTimeout(() => setDisabled(false)), 500)
         .catch((e) => console.log(e));
     } catch (e) {
       console.log(e);
@@ -224,7 +227,7 @@ const ModalPutRemission = ({
             <Button onClick={() => handleClose()}>Cancelar</Button>
           </Grid>
           <Grid item xs={6}>
-            <Button type="submit">Guardar</Button>
+            <Button type="submit" disabled={disabled}>Guardar</Button>
           </Grid>
         </Grid>
       </form>

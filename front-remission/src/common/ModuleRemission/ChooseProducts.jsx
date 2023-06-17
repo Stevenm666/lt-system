@@ -50,7 +50,11 @@ const ChooseProducts = ({
           element.price =
             defaultValues?.defaultProducts[i]?.price ?? element?.product?.price; // taken the default price of the product
         } else {
-          element.price = parseInt(element.price.replace(/\D/g, "")); // format the price
+          element.price =
+            typeof element?.price === "number"
+              ? element?.price
+              : parseInt(element.price.replace(/\D/g, "")); // format the price
+
         }
       });
     }

@@ -93,8 +93,28 @@ const FormRemission = ({ setReload, handleClose }) => {
     }
   };
 
+  const validatedValues = () => {
+    if (Boolean(productSelected?.length)) {
+      productSelected?.forEach((element, i) => {
+        if (!element.hasOwnProperty("amount")) {
+          element.amount = 1; // default amount
+        }
+        if (!element.hasOwnProperty("price")) {
+          element.price = element?.product?.price; // taken the default price of the product
+        } else {
+          element.price =
+            typeof element?.price === "number"
+              ? element?.price
+              : parseInt(element.price.replace(/\D/g, "")); // format the price
+        }
+      });
+    }
+  };
+
   const onSubmit = (values) => {
     try {
+      validatedValues();
+      setDisabledSubmit(true);
       values["is_new"] = !userFound;
       values["rol"] = user?.rol;
       values["payment_method"] = null;
@@ -105,14 +125,13 @@ const FormRemission = ({ setReload, handleClose }) => {
       }
       postRemission(values)
         .then(({ data }) => {
-          setDisabledSubmit(true);
           if (data?.status === "success") {
             setReload((prev) => !prev);
             enqueueSnackbar("Se ha creado exitosamente", successToast);
             handleClose();
           }
         })
-        .finally(() => setDisabledSubmit(false))
+        .finally(() => setTimeout(() => setDisabledSubmit(false)), 500)
         .catch((e) => console.log(e));
     } catch (e) {
       console.log(e);
