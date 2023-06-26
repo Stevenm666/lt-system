@@ -83,8 +83,9 @@ const RemissionById = ({ id }) => {
 
   useEffect(() => {
     try {
+      console.log(remission, )
       if (remission?.identy_user) {
-        getUserByDocumentOnly(remission?.identy_user)
+        getUserByDocumentOnly(remission?.identy_user, remission?.type_identy_user)
           .then(({ data }) => {
             if (data?.status === "success") {
               setUser(data?.data);

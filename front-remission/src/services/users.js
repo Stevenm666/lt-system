@@ -10,6 +10,6 @@ export const getUserByDocument = (type, document) => {
   );
 };
 
-export const getUserByDocumentOnly = (document) => {
-  return instance.get(`/users/by_document_only?identy=${document}`);
+export const getUserByDocumentOnly = (document, type) => {
+  return instance.get(`/users/by_document_only?identy=${document}&type=${type}`);
 };
