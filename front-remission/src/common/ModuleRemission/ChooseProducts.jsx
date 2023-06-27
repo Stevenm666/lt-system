@@ -53,8 +53,10 @@ const ChooseProducts = ({
           element.price =
             typeof element?.price === "number"
               ? element?.price
+              : element?.price == ""
+              ? defaultValues?.defaultProducts[i]?.price ??
+                element?.product?.price
               : parseInt(element.price.replace(/\D/g, "")); // format the price
-
         }
       });
     }
