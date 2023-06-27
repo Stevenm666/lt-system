@@ -25,3 +25,5 @@ export const cities = [
   { id: 14, name: "Valledupar" },
   { id: 15, name: "Armenia" },
 ];
+
+export const versionApp = "1.0.1"
