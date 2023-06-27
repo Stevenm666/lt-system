@@ -27,6 +27,7 @@ const BoxModule = () => {
   const [reloadMovement, setReloadMovement] = useState(false);
   const [date, setDate] = useState(new Date());
   const [disablePDF, setDisablePDF] = useState(true);
+  const [statusBox, setStatusBox] = useState("Caja cerrada");
 
   // box open and close
   const [isOpen, setIsOpen] = useState(true);
@@ -51,6 +52,12 @@ const BoxModule = () => {
   // box movement
   const [dataBoxMovement, setDataBoxMovement] = useState([]);
 
+  const possibleDataBox = [
+    "Caja cerrada",
+    "Caja abierta",
+    "Caja cerrada por sistema",
+  ];
+
   useEffect(() => {
     try {
       let dateFormatted = format(date, "yyyy-MM-dd");
@@ -59,10 +66,14 @@ const BoxModule = () => {
           if (data?.status === "success") {
             setIsOpenStill(data?.data?.status == 1 ?? false); // disabled the open box if existe one with status 1 in this day
             setIsOpen(
-              Array.isArray(data?.data) ? true : data?.data?.status == 0
+              Array.isArray(data?.data) ? true : (data?.data?.status == 0 || data?.data?.status == 2)
             );
-            setDisablePDF(Boolean(!data?.data?.ending))
-            ; // if not existe the object then disable pdf
+            setStatusBox(
+              Array.isArray(data?.data)
+                ? possibleDataBox[0]
+                : possibleDataBox[data?.data?.status]
+            );
+            setDisablePDF(!(typeof data?.data?.ending === "number")); // if not existe the object then disable pdf
             setDataBox(data?.data);
           }
         })
@@ -159,9 +170,7 @@ const BoxModule = () => {
         </Grid>
         <Grid item xs={2}>
           <Box>
-            <Typography>
-              {isOpenStill ? "Caja abierta" : "Caja cerrada"}
-            </Typography>
+            <Typography>{statusBox}</Typography>
           </Box>
         </Grid>
         <Grid item xs={6}>
@@ -225,7 +234,7 @@ const BoxModule = () => {
               <Button
                 style={styles.boxBorder}
                 variant="outlined"
-                disabled={disablePDF }
+                disabled={disablePDF}
                 onClick={() => setOpenPDF(true)}
               >
                 <Box style={styles?.alignItemsBorder}>
