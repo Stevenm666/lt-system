@@ -80,15 +80,18 @@ const FormRemission = ({ setReload, handleClose }) => {
     );
     if (!products?.length) {
       enqueueSnackbar("Se necesita al menos un producto", errorToast);
+      setDisabledSubmit(false)
       return -1;
     }
     if (products && products?.length > 10) {
       enqueueSnackbar("Maximo 10 productos", errorToast);
+      setDisabledSubmit(false)
       return -1;
     }
 
     if (amountOfProducts >= 10) {
       enqueueSnackbar("Maximo 10 productos", errorToast);
+      setDisabledSubmit(false)
       return -1;
     }
   };
@@ -134,6 +137,7 @@ const FormRemission = ({ setReload, handleClose }) => {
         .finally(() => setTimeout(() => setDisabledSubmit(false)), 500)
         .catch((e) => console.log(e));
     } catch (e) {
+      setDisabledSubmit(false);
       console.log(e);
     }
   };
