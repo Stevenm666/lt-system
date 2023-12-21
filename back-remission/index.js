@@ -16,22 +16,26 @@ const boxRouter = require('./src/router/box');
 const boxMovementRouter = require('./src/router/box_movement');
 
 // import middleware
-const middlewareHeaders = require('./src/middlewares/headers');
+//const middlewareHeaders = require('./src/middlewares/headers.js');
 
 // create app
 const app = express();
 
+app.use(cors({
+    origin: '*'
+}));
+
 // middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors());
 
-app.use((req, res, next) => middlewareHeaders(req, res, next)) // validate headers
+
 app.use(express.static('public')); // static image
 app.set('view engine', 'hbs'); // allow hbs files
 
 
 // http request
+//app.use((req, res, next) => middlewareHeaders(req, res, next)) // validate headers
 app.use('/login', loginRouter);
 app.use('/upload', uploadRouter);
 app.use('/users', usersRouter);

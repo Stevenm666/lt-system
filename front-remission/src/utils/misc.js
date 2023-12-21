@@ -26,4 +26,4 @@ export const cities = [
   { id: 15, name: "Armenia" },
 ];
 
-export const versionApp = "1.0.1"
+export const versionApp = "1.0.2"

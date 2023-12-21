@@ -1,9 +1,18 @@
 const connectionDB = {
-    host: 'localhost',
-    user: 'root',
-    password: 'root',
-    database: 'remission'
+    host: "127.0.0.1",
+    user: "root",
+    password: "F0712020",
+    database: "remission",
+    port: 3306 
 };
+
+// const connectionDB = {
+//     host: "127.0.0.1",
+//     user: "root",
+//     password: "",
+//     database: "remission",
+//     port: 33306 
+// };
 
 const sucessResponse = (res, data, message = "") => {
     if(!data?.length) {
@@ -33,10 +42,10 @@ const sucessResponse = (res, data, message = "") => {
 }
 
 const errorReponse = (res, codeStatus, message = "") => {
-    res.status(codeStatus).json({
+    res.json({
         message,
         data: [],
-    })
+    }).status(codeStatus)
 }
 
 module.exports = {
