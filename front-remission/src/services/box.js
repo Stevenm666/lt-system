@@ -15,3 +15,7 @@ export const putOpenBoxToClose = (id, body) => {
 export const putOpenBox = (id, body) => {
   return instance.put(`/box/${id}`, body);
 }
+
+export const getInitialValues = (id) => {
+  return instance.get(`/box/getValues/${id}`);
+}

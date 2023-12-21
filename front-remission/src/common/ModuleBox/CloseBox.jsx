@@ -7,6 +7,9 @@ import { Box, Grid, Typography, TextField, Button } from "@material-ui/core";
 import { BsCash } from "react-icons/bs";
 import { AiFillCreditCard } from "react-icons/ai";
 
+// SERVICES
+import { getInitialValues } from '../../services/box'
+
 // Styles
 import { styles } from "../../styles/closeBox.styles";
 import { NumericFormat } from "react-number-format";
@@ -24,6 +27,13 @@ const CloseBox = ({ handleClose, dataBox, setReload }) => {
   // useState
   const [dataValues, setDataValues] = useState({});
   const [secondForm, setSecondForm] = useState();
+  const [initialValues, setInitialValues] = useState({
+    "efectivo" : 0,
+    "bancolombia" : 0,
+    "nequi" : 0,
+    "daviplata" : 0,
+    "tarjeta" : 0
+  })
   const onSubmit = (values) => {
     values["cash"] = values["cash"] ? parseInt(values["cash"].replace(/\D/g, "")) : 0
     values["bancolombia"] = values["bancolombia"] ? parseInt(values["bancolombia"].replace(/\D/g, "")) : 0
@@ -37,6 +47,24 @@ const CloseBox = ({ handleClose, dataBox, setReload }) => {
   const onError = (err) => {
     console.log(err);
   };
+
+  useEffect(() => {
+    fetchValues(dataBox.id)
+  }, [])
+
+  const fetchValues = (id) => {
+    getInitialValues(id).then((data) => {
+      const { efectivo, bancolombia, nequi, daviplata, tarjeta } = data.data.data
+      setInitialValues({
+        "efectivo" : efectivo,
+        "bancolombia" : bancolombia,
+        "nequi" : nequi,
+        "daviplata" : daviplata,
+        "tarjeta" : tarjeta
+      })
+    })
+  }
+  
 
   const totalCount = useMemo(() => {
     const keys = watch([
@@ -93,17 +121,23 @@ const CloseBox = ({ handleClose, dataBox, setReload }) => {
       />
       <Grid container spacing={1}>
         {/* CASH */}
-        <Grid item xs={6}>
+        <Grid item xs={7}>
           <Grid container spacing={2}>
-            <Grid item xs={4}>
+            <Grid item xs={2}>
               <BsCash size={25} />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               <Typography>Efectivo</Typography>
+            </Grid>
+            <Grid item xs={4}>
+            <Typography>{parseInt(initialValues?.efectivo).toLocaleString("es-CO", {
+                style: "currency",
+                currency: "COP",
+              })}</Typography>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={5}>
           <Controller
             name="cash"
             control={control}
@@ -129,17 +163,23 @@ const CloseBox = ({ handleClose, dataBox, setReload }) => {
           />
         </Grid>
         {/* BANCOLOMBIA */}
-        <Grid item xs={6}>
+        <Grid item xs={7}>
           <Grid container spacing={2}>
-            <Grid item xs={4}>
+            <Grid item xs={2}>
               <AiFillCreditCard size={25} />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               <Typography>Bancolombia</Typography>
+            </Grid>
+            <Grid item xs={4}>
+            <Typography>{parseInt(initialValues?.bancolombia).toLocaleString("es-CO", {
+                style: "currency",
+                currency: "COP",
+              })}</Typography>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={5}>
           <Controller
             name="bancolombia"
             control={control}
@@ -165,17 +205,23 @@ const CloseBox = ({ handleClose, dataBox, setReload }) => {
           />
         </Grid>
         {/* Nequi */}
-        <Grid item xs={6}>
+        <Grid item xs={7}>
           <Grid container spacing={2}>
-            <Grid item xs={4}>
+            <Grid item xs={2}>
               <AiFillCreditCard size={25} />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               <Typography>Nequi</Typography>
+            </Grid>
+            <Grid item xs={4}>
+            <Typography>{parseInt(initialValues?.nequi).toLocaleString("es-CO", {
+                style: "currency",
+                currency: "COP",
+              })}</Typography>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={5}>
           <Controller
             name="nequi"
             control={control}
@@ -201,17 +247,23 @@ const CloseBox = ({ handleClose, dataBox, setReload }) => {
           />
         </Grid>
         {/* Daviplata */}
-        <Grid item xs={6}>
+        <Grid item xs={7}>
           <Grid container spacing={2}>
-            <Grid item xs={4}>
+            <Grid item xs={2}>
               <AiFillCreditCard size={25} />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               <Typography>Daviplata</Typography>
+            </Grid>
+            <Grid item xs={4}>
+            <Typography>{parseInt(initialValues?.daviplata).toLocaleString("es-CO", {
+                style: "currency",
+                currency: "COP",
+              })}</Typography>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={5}>
           <Controller
             name="daviplata"
             control={control}
@@ -237,17 +289,23 @@ const CloseBox = ({ handleClose, dataBox, setReload }) => {
           />
         </Grid>
         {/* Tarjeta */}
-        <Grid item xs={6}>
+        <Grid item xs={7}>
           <Grid container spacing={2}>
-            <Grid item xs={4}>
+            <Grid item xs={2}>
               <AiFillCreditCard size={25} />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               <Typography>Tarjeta</Typography>
+            </Grid>
+            <Grid item xs={4}>
+            <Typography>{parseInt(initialValues?.tarjeta).toLocaleString("es-CO", {
+                style: "currency",
+                currency: "COP",
+              })}</Typography>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={5}>
           <Controller
             name="card"
             control={control}

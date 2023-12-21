@@ -139,7 +139,7 @@ const BoxModule = () => {
       <SharedDialog
         open={closeBox}
         handleClose={() => setCloseBox(false)}
-        title="Cierre de caja"
+        title="Cerrar de caja"
         body={
           <CloseBox
             handleClose={() => setCloseBox(false)}
